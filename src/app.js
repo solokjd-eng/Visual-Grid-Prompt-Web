@@ -65,12 +65,18 @@ const elements = {
   toggleGridBorders: document.getElementById("toggle-grid-borders"),
   toggleMockup: document.getElementById("toggle-mockup"),
   
-  // Area Editor & Presets
+  // Area Editor & Presets (Windows Explorer Tree Selector)
   areaTabs: document.getElementById("area-tabs"),
   editorCard: document.getElementById("area-editor-card"),
   activeAreaTitle: document.getElementById("active-area-title"),
   activeAreaSpatialBadge: document.getElementById("active-area-spatial"),
-  presetSelect: document.getElementById("preset-select"),
+  presetTreeWrapper: document.getElementById("preset-tree-wrapper"),
+  presetTreeBtn: document.getElementById("preset-tree-btn"),
+  presetTreeSelectedText: document.getElementById("preset-tree-selected-text"),
+  presetTreeArrow: document.getElementById("preset-tree-arrow"),
+  presetTreePopover: document.getElementById("preset-tree-popover"),
+  presetTreeSearch: document.getElementById("preset-tree-search"),
+  presetTreeBody: document.getElementById("preset-tree-body"),
   customPresetSelect: document.getElementById("custom-preset-select"),
   inputKoPrompt: document.getElementById("input-ko-prompt"),
   inputEnPrompt: document.getElementById("input-en-prompt"),
@@ -385,38 +391,133 @@ function setPresetToActiveArea({ ko, en }) {
 }
 
 /**
- * Initialize Default Preset Dropdown (기본 샷 / 구도 전용)
+ * Initialize Windows Explorer-Style Tree Preset Selector
  */
 function initPresetsUI() {
-  if (!elements.presetSelect) return;
-  elements.presetSelect.innerHTML = `<option value="">▼ ⚡ 기본 프리셋 (샷 / 구도)</option>`;
-  
-  PRESET_GROUPS.forEach(grp => {
-    const optGroup = document.createElement("optgroup");
-    optGroup.label = grp.group;
-    
-    grp.items.forEach(item => {
-      const opt = document.createElement("option");
-      opt.value = item.en;
-      opt.textContent = item.label;
-      opt.dataset.ko = item.ko;
-      opt.dataset.en = item.en;
-      optGroup.appendChild(opt);
-    });
-    
-    elements.presetSelect.appendChild(optGroup);
+  if (!elements.presetTreeBtn || !elements.presetTreePopover || !elements.presetTreeBody) return;
+
+  renderExplorerTree();
+
+  // 토글 탐색기 팝오버 열기/닫기
+  elements.presetTreeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isCollapsed = elements.presetTreePopover.classList.toggle("collapsed");
+    elements.presetTreeBtn.classList.toggle("open", !isCollapsed);
+    if (!isCollapsed && elements.presetTreeSearch) {
+      elements.presetTreeSearch.focus();
+    }
   });
 
-  // 선택 시 즉시 구도 교체
-  elements.presetSelect.addEventListener("change", (e) => {
-    const val = e.target.value;
-    if (!val) return;
-    const selectedOpt = e.target.selectedOptions[0];
-    const ko = selectedOpt ? selectedOpt.dataset.ko : "";
-    const en = selectedOpt ? selectedOpt.dataset.en : val;
-    
-    setPresetToActiveArea({ ko, en });
-    e.target.value = ""; // 재선택 가능하도록 플레이스홀더로 리셋
+  // 바깥 영역 클릭 시 탐색기 닫기
+  document.addEventListener("click", (e) => {
+    if (e && e.target && elements.presetTreeWrapper && !elements.presetTreeWrapper.contains(e.target)) {
+      elements.presetTreePopover.classList.add("collapsed");
+      elements.presetTreeBtn.classList.remove("open");
+    }
+  });
+
+  // 실시간 검색 필터링
+  if (elements.presetTreeSearch) {
+    elements.presetTreeSearch.addEventListener("input", () => {
+      const q = elements.presetTreeSearch.value.trim().toLowerCase();
+      filterExplorerTree(q);
+    });
+  }
+}
+
+function renderExplorerTree() {
+  if (!elements.presetTreeBody) return;
+  elements.presetTreeBody.innerHTML = "";
+
+  PRESET_GROUPS.forEach((grp) => {
+    // 1. Folder Wrapper
+    const folderWrap = document.createElement("div");
+    folderWrap.className = "tree-folder-group";
+    folderWrap.dataset.groupName = grp.group;
+
+    // 2. Folder Header (대분류 폴더)
+    const folderHeader = document.createElement("div");
+    folderHeader.className = "tree-folder";
+    folderHeader.innerHTML = `
+      <span class="tree-folder-arrow">▶</span>
+      <span class="tree-folder-icon">${grp.icon || "📁"}</span>
+      <span class="tree-folder-label">${grp.group}</span>
+      <span class="tree-folder-count">(${grp.items.length})</span>
+    `;
+
+    // 3. Folder Children (소분류 항목 리스트)
+    const childrenWrap = document.createElement("div");
+    childrenWrap.className = "tree-folder-children collapsed";
+
+    grp.items.forEach(item => {
+      const itemEl = document.createElement("div");
+      itemEl.className = "tree-item";
+      itemEl.dataset.ko = item.ko;
+      itemEl.dataset.en = item.en;
+      itemEl.dataset.label = item.label;
+      itemEl.innerHTML = `
+        <span class="tree-item-icon">📄</span>
+        <span class="tree-item-label">${item.label}</span>
+      `;
+
+      itemEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setPresetToActiveArea({ ko: item.ko, en: item.en });
+        if (elements.presetTreeSelectedText) {
+          const shortGrp = grp.group.split(' ')[0];
+          elements.presetTreeSelectedText.textContent = `⚡ [${shortGrp}] ${item.label}`;
+        }
+        elements.presetTreePopover.classList.add("collapsed");
+        elements.presetTreeBtn.classList.remove("open");
+      });
+
+      childrenWrap.appendChild(itemEl);
+    });
+
+    // 폴더 클릭 시 하위 항목 아코디언 토글
+    folderHeader.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = folderHeader.classList.toggle("open");
+      childrenWrap.classList.toggle("collapsed", !isOpen);
+    });
+
+    folderWrap.appendChild(folderHeader);
+    folderWrap.appendChild(childrenWrap);
+    elements.presetTreeBody.appendChild(folderWrap);
+  });
+}
+
+function filterExplorerTree(query) {
+  const groups = elements.presetTreeBody.querySelectorAll(".tree-folder-group");
+  groups.forEach(grpEl => {
+    const folderHeader = grpEl.querySelector(".tree-folder");
+    const childrenWrap = grpEl.querySelector(".tree-folder-children");
+    const items = grpEl.querySelectorAll(".tree-item");
+
+    if (!query) {
+      grpEl.style.display = "block";
+      items.forEach(it => it.style.display = "flex");
+      return;
+    }
+
+    let hasMatch = false;
+    items.forEach(it => {
+      const text = `${it.dataset.label} ${it.dataset.ko} ${it.dataset.en}`.toLowerCase();
+      if (text.includes(query)) {
+        it.style.display = "flex";
+        hasMatch = true;
+      } else {
+        it.style.display = "none";
+      }
+    });
+
+    if (hasMatch) {
+      grpEl.style.display = "block";
+      folderHeader.classList.add("open");
+      childrenWrap.classList.remove("collapsed");
+    } else {
+      grpEl.style.display = "none";
+    }
   });
 }
 
@@ -1093,12 +1194,50 @@ function getMockupSvg(text = "") {
     </svg>`;
   }
 
-  // 9. 배경 / 도시 / 자연 / 소품 (Scenery / City / Props)
-  if (lower.includes("city") || lower.includes("도시") || lower.includes("forest") || lower.includes("숲") || lower.includes("beach") || lower.includes("바다") || lower.includes("prop") || lower.includes("소품")) {
-    return `<svg viewBox="0 0 100 80" class="mockup-svg" fill="none" stroke="currentColor" preserveAspectRatio="xMidYMid meet">
-      <rect x="8" y="10" width="84" height="66" rx="6" stroke-width="2.4"/>
-      <circle cx="28" cy="30" r="9" stroke-width="2.2"/>
-      <path d="M 10 68 L 36 38 L 58 58 L 70 46 L 90 68 Z" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  // 9. 발 클로즈업 (Feet / Foot Sole / Arch Close-up)
+  if (lower.includes("feet") || lower.includes("foot") || lower.includes("toes") || lower.includes("발") || lower.includes("발등") || lower.includes("발바닥")) {
+    return `<svg viewBox="0 0 100 100" class="mockup-svg" fill="none" stroke="currentColor" preserveAspectRatio="xMidYMid meet">
+      <!-- Ankle & Foot Contour with graceful arch & toes -->
+      <path d="M 38 12 L 36 48 Q 34 66 18 78 L 18 86 Q 44 86 64 82 Q 86 78 88 64 Q 88 52 74 46 L 52 42 L 52 12" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Toe separators -->
+      <circle cx="24" cy="80" r="3" fill="currentColor"/>
+      <circle cx="32" cy="80" r="2.5" fill="currentColor"/>
+      <circle cx="40" cy="79" r="2.2" fill="currentColor"/>
+      <!-- Ground line -->
+      <line x1="8" y1="92" x2="92" y2="92" stroke-width="2" stroke-dasharray="4,4" opacity="0.5"/>
+    </svg>`;
+  }
+
+  // 10. 손 클로즈업 (Hand & Fingers Gesture Close-up)
+  if (lower.includes("hand") || lower.includes("palm") || lower.includes("손") || lower.includes("손등") || lower.includes("손바닥") || lower.includes("fingers")) {
+    return `<svg viewBox="0 0 100 100" class="mockup-svg" fill="none" stroke="currentColor" preserveAspectRatio="xMidYMid meet">
+      <!-- Wrist & Palm -->
+      <path d="M 36 94 L 38 64 L 22 52 L 28 36 L 40 48 L 42 22 L 52 22 L 52 46 L 56 16 L 66 16 L 64 48 L 68 24 L 78 26 L 74 54 Q 72 74 58 94 Z" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="38" y1="94" x2="58" y2="94" stroke-width="2.6" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  // 11. 엉덩이부 (Hips & Buttocks Focus)
+  if (lower.includes("hip") || lower.includes("buttocks") || lower.includes("pelvis") || lower.includes("엉덩이") || lower.includes("골반")) {
+    return `<svg viewBox="0 0 100 100" class="mockup-svg" fill="none" stroke="currentColor" preserveAspectRatio="xMidYMid meet">
+      <!-- Waist to Hips & Buttocks Contour -->
+      <path d="M 30 14 Q 24 44 18 64 Q 14 84 38 88 L 44 88 M 70 14 Q 76 44 82 64 Q 86 84 62 88 L 56 88" stroke-width="2.6" stroke-linecap="round"/>
+      <!-- Center pelvic line / Spine base -->
+      <path d="M 50 18 L 50 68 Q 50 82 44 88 M 50 68 Q 50 82 56 88" stroke-width="2.2" stroke-linecap="round"/>
+      <!-- Gluteal curves -->
+      <path d="M 28 66 Q 50 80 44 88 M 72 66 Q 50 80 56 88" stroke-width="2" opacity="0.6"/>
+    </svg>`;
+  }
+
+  // 12. 가슴 클로즈업 / 쇄골 (Chest & Neckline Close-up)
+  if (lower.includes("chest") || lower.includes("가슴 클로즈업") || lower.includes("쇄골") || lower.includes("collarbone")) {
+    return `<svg viewBox="0 0 100 100" class="mockup-svg" fill="none" stroke="currentColor" preserveAspectRatio="xMidYMid meet">
+      <!-- Neck & Collarbones -->
+      <path d="M 40 10 L 40 28 M 60 10 L 60 28 M 16 38 Q 40 34 50 42 Q 60 34 84 38" stroke-width="2.4" stroke-linecap="round"/>
+      <!-- Chest curve / Bust contour -->
+      <path d="M 18 42 Q 36 78 50 64 Q 64 78 82 42" stroke-width="2.6" stroke-linecap="round"/>
+      <!-- Torso outline -->
+      <path d="M 22 70 L 26 96 M 78 70 L 74 96" stroke-width="2.2" stroke-linecap="round"/>
     </svg>`;
   }
 

@@ -51,82 +51,111 @@ export const ART_STYLES = [
   }
 ];
 
-// 엑셀 표 기반 체계적 샷/구도 프리셋 그룹 (한국어 + 영어)
+// 엑셀 표 기반 체계적 샷/구도 프리셋 그룹 (캐릭터 설정화 특화 10대 분류)
 export const PRESET_GROUPS = [
   {
-    group: "얼굴 - 일반 (Face)",
+    group: "얼굴 (헤어부터 쇄골까지)",
+    icon: "👤",
     items: [
-      { label: "얼굴 일반: 정면 (Front View)", ko: "얼굴 정면", en: "face, front view, detailed facial features" },
-      { label: "얼굴 일반: 측면 (Side View)", ko: "얼굴 측면", en: "face, side profile view" },
-      { label: "얼굴 일반: 45도 측면 (3/4 View)", ko: "얼굴 45도 측면", en: "face, three-quarter view, 45-degree angle" },
-      { label: "얼굴 일반: 후면 (Back View)", ko: "얼굴 후면", en: "back of head, from behind" },
-      { label: "얼굴 일반: 위에서 내려다 보기 (High Angle)", ko: "얼굴 하이앵글 (위에서)", en: "face, high angle, from above" },
-      { label: "얼굴 일반: 아래에서 올려다 보기 (Low Angle)", ko: "얼굴 로우앵글 (아래에서)", en: "face, low angle, from below" }
+      { label: "정면", ko: "얼굴 (헤어부터 쇄골까지): 정면", en: "portrait from hair to collarbone, front view, detailed face and hairstyle" },
+      { label: "측면", ko: "얼굴 (헤어부터 쇄골까지): 측면", en: "portrait from hair to collarbone, side profile view" },
+      { label: "45도 측면", ko: "얼굴 (헤어부터 쇄골까지): 45도 측면", en: "portrait from hair to collarbone, three-quarter view, 45-degree angle" },
+      { label: "위에서 본", ko: "얼굴 (헤어부터 쇄골까지): 위에서 본 (하이앵글)", en: "portrait from hair to collarbone, high angle, from above" },
+      { label: "아래에서 본", ko: "얼굴 (헤어부터 쇄골까지): 아래에서 본 (로우앵글)", en: "portrait from hair to collarbone, low angle, from below" },
+      { label: "후면", ko: "얼굴 (헤어부터 쇄골까지): 후면 (뒷모습)", en: "back of head and hairstyle, back view, from behind, collarbone line" }
     ]
   },
   {
-    group: "얼굴 - 초근접 (Extreme Close-Up)",
+    group: "얼굴 초근접",
+    icon: "👁️",
     items: [
-      { label: "얼굴 초근접: 정면 (Front View)", ko: "얼굴 초근접 정면", en: "extreme close-up face, front view, macro detail" },
-      { label: "얼굴 초근접: 측면 (Side View)", ko: "얼굴 초근접 측면", en: "extreme close-up face, side profile view" },
-      { label: "얼굴 초근접: 45도 측면 (3/4 View)", ko: "얼굴 초근접 45도 측면", en: "extreme close-up face, three-quarter view, 45-degree angle" },
-      { label: "얼굴 초근접: 후면 (Back View)", ko: "얼굴 초근접 후면", en: "extreme close-up back of head" },
-      { label: "얼굴 초근접: 위에서 내려다 보기 (High Angle)", ko: "얼굴 초근접 하이앵글", en: "extreme close-up face, high angle, from above" },
-      { label: "얼굴 초근접: 아래에서 올려다 보기 (Low Angle)", ko: "얼굴 초근접 로우앵글", en: "extreme close-up face, low angle, from below" }
+      { label: "정면", ko: "얼굴 초근접: 정면", en: "extreme macro close-up of face, front view, macro eyes and lips detail" },
+      { label: "측면", ko: "얼굴 초근접: 측면", en: "extreme macro close-up of face, side profile view" },
+      { label: "45도 측면", ko: "얼굴 초근접: 45도 측면", en: "extreme macro close-up of face, three-quarter view, 45-degree angle" }
     ]
   },
   {
-    group: "상반신 - 가슴까지 (Bust Shot)",
+    group: "상반신 가슴까지",
+    icon: "👚",
     items: [
-      { label: "상반신 (가슴): 정면 (Front View)", ko: "상반신 가슴 정면", en: "bust shot, upper body, front view" },
-      { label: "상반신 (가슴): 측면 (Side View)", ko: "상반신 가슴 측면", en: "bust shot, upper body, side profile view" },
-      { label: "상반신 (가슴): 45도 측면 (3/4 View)", ko: "상반신 가슴 45도 측면", en: "bust shot, upper body, three-quarter view, 45-degree angle" },
-      { label: "상반신 (가슴): 후면 (Back View)", ko: "상반신 가슴 후면", en: "bust shot, upper body, back view, from behind" },
-      { label: "상반신 (가슴): 위에서 내려다 보기 (High Angle)", ko: "상반신 가슴 하이앵글", en: "bust shot, upper body, high angle, from above" },
-      { label: "상반신 (가슴): 아래에서 올려다 보기 (Low Angle)", ko: "상반신 가슴 로우앵글", en: "bust shot, upper body, low angle, from below" }
+      { label: "정면", ko: "상반신 가슴까지: 정면", en: "bust shot, upper body to chest, front view, neckline detail" },
+      { label: "측면", ko: "상반신 가슴까지: 측면", en: "bust shot, upper body to chest, side profile view" },
+      { label: "45도 측면", ko: "상반신 가슴까지: 45도 측면", en: "bust shot, upper body to chest, three-quarter view" },
+      { label: "위에서 본", ko: "상반신 가슴까지: 위에서 본 (하이앵글)", en: "bust shot, upper body to chest, high angle, looking down" },
+      { label: "아래에서 본", ko: "상반신 가슴까지: 아래에서 본 (로우앵글)", en: "bust shot, upper body to chest, low angle, looking up" }
     ]
   },
   {
-    group: "상반신 - 허리까지 (Waist Shot)",
+    group: "상반신 허리까지",
+    icon: "👗",
     items: [
-      { label: "상반신 (허리): 정면 (Front View)", ko: "상반신 허리 정면", en: "waist shot, waist up, front view" },
-      { label: "상반신 (허리): 측면 (Side View)", ko: "상반신 허리 측면", en: "waist shot, waist up, side profile view" },
-      { label: "상반신 (허리): 45도 측면 (3/4 View)", ko: "상반신 허리 45도 측면", en: "waist shot, waist up, three-quarter view, 45-degree angle" },
-      { label: "상반신 (허리): 후면 (Back View)", ko: "상반신 허리 후면", en: "waist shot, waist up, back view, from behind" },
-      { label: "상반신 (허리): 위에서 내려다 보기 (High Angle)", ko: "상반신 허리 하이앵글", en: "waist shot, waist up, high angle, from above" },
-      { label: "상반신 (허리): 아래에서 올려다 보기 (Low Angle)", ko: "상반신 허리 로우앵글", en: "waist shot, waist up, low angle, from below" }
+      { label: "정면", ko: "상반신 허리까지: 정면", en: "waist shot, upper body to waist, front view, outfit detail" },
+      { label: "측면", ko: "상반신 허리까지: 측면", en: "waist shot, upper body to waist, side profile view" },
+      { label: "45도 측면", ko: "상반신 허리까지: 45도 측면", en: "waist shot, upper body to waist, three-quarter view" },
+      { label: "위에서 본", ko: "상반신 허리까지: 위에서 본 (하이앵글)", en: "waist shot, upper body to waist, high angle, from above" },
+      { label: "아래에서 본", ko: "상반신 허리까지: 아래에서 본 (로우앵글)", en: "waist shot, upper body to waist, low angle, from below" }
     ]
   },
   {
-    group: "전신 - 일반 (Full Body)",
+    group: "가슴 클로즈업",
+    icon: "✨",
     items: [
-      { label: "전신: 정면 (Front View)", ko: "전신 정면", en: "full body, front view" },
-      { label: "전신: 측면 (Side View)", ko: "전신 측면", en: "full body, side profile view" },
-      { label: "전신: 45도 측면 (3/4 View)", ko: "전신 45도 측면", en: "full body, three-quarter view, 45-degree angle" },
-      { label: "전신: 후면 (Back View)", ko: "전신 후면", en: "full body, back view, from behind" },
-      { label: "전신: 위에서 내려다 보기 (High Angle)", ko: "전신 하이앵글", en: "full body, high angle, bird-eye view, from above" },
-      { label: "전신: 아래에서 올려다 보기 (Low Angle)", ko: "전신 로우앵글", en: "full body, low angle, worm-eye view, from below" }
+      { label: "정면", ko: "가슴 클로즈업: 정면", en: "close-up shot focused on chest and neckline, front view, outfit detail" },
+      { label: "측면", ko: "가슴 클로즈업: 측면", en: "close-up shot focused on chest, side profile view" },
+      { label: "45도 측면", ko: "가슴 클로즈업: 45도 측면", en: "close-up shot focused on chest, three-quarter angle" },
+      { label: "위에서 본", ko: "가슴 클로즈업: 위에서 본 (하이앵글)", en: "close-up shot focused on chest, high angle, top-down view" },
+      { label: "아래에서 본", ko: "가슴 클로즈업: 아래에서 본 (로우앵글)", en: "close-up shot focused on chest, low angle, looking up" }
     ]
   },
   {
-    group: "하반신 - 일반 (Lower Body)",
+    group: "전신",
+    icon: "🧍",
     items: [
-      { label: "하반신: 정면 (Front View)", ko: "하반신 정면", en: "lower body, legs, front view" },
-      { label: "하반신: 측면 (Side View)", ko: "하반신 측면", en: "lower body, legs, side profile view" },
-      { label: "하반신: 45도 측면 (3/4 View)", ko: "하반신 45도 측면", en: "lower body, legs, three-quarter view, 45-degree angle" },
-      { label: "하반신: 후면 (Back View)", ko: "하반신 후면", en: "lower body, legs, back view, from behind" },
-      { label: "하반신: 위에서 내려다 보기 (High Angle)", ko: "하반신 하이앵글", en: "lower body, legs, high angle, from above" },
-      { label: "하반신: 아래에서 올려다 보기 (Low Angle)", ko: "하반신 로우앵글", en: "lower body, legs, low angle, from below" }
+      { label: "정면", ko: "전신: 정면", en: "full body shot, front view, standing pose" },
+      { label: "측면", ko: "전신: 측면", en: "full body shot, side profile view, standing" },
+      { label: "45도 측면", ko: "전신: 45도 측면", en: "full body shot, three-quarter view, 45-degree angle standing" },
+      { label: "후면", ko: "전신: 후면 (뒷모습)", en: "full body shot from behind, back view, full outfit and hair details" },
+      { label: "자연스러운 워킹 포즈", ko: "전신: 자연스러운 워킹 포즈", en: "full body shot, natural walking pose on runway, dynamic posture" }
     ]
   },
   {
-    group: "소품 & 배경 (Props & Background)",
+    group: "하반신 엉덩이부터 다리까지 (각선미 강조)",
+    icon: "🦵",
     items: [
-      { label: "소품 / 오브젝트 (Props)", ko: "소품 오브젝트", en: "detailed prop, focused object" },
-      { label: "사이버펑크 도시 (Cyberpunk City)", ko: "사이버펑크 도시", en: "cyberpunk neon city, glowing holographic lights" },
-      { label: "자연 / 숲 (Lush Forest)", ko: "자연 숲 배경", en: "lush forest, trees, dappled sunlight" },
-      { label: "해변 / 바다 (Ocean Beach)", ko: "해변 바다 배경", en: "ocean, sandy beach, sea waves" },
-      { label: "아늑한 실내 (Cozy Room)", ko: "아늑한 실내 방", en: "indoor room, cozy interior" }
+      { label: "정면", ko: "하반신 엉덩이부터 다리까지: 정면", en: "lower body shot from hips to legs, legs focus, front view, slender leg lines" },
+      { label: "측면", ko: "하반신 엉덩이부터 다리까지: 측면", en: "lower body shot from hips to legs, side profile view" },
+      { label: "45도 측면", ko: "하반신 엉덩이부터 다리까지: 45도 측면", en: "lower body shot from hips to legs, three-quarter view" },
+      { label: "후면", ko: "하반신 엉덩이부터 다리까지: 후면 (뒷모습)", en: "lower body shot from hips to legs, back view, hips and legs focus" },
+      { label: "매혹적인 포즈", ko: "하반신 엉덩이부터 다리까지: 매혹적인 각선미 포즈", en: "lower body shot from hips to legs, graceful leg lines, seductive posture" }
+    ]
+  },
+  {
+    group: "엉덩이부",
+    icon: "🍑",
+    items: [
+      { label: "정면", ko: "엉덩이부: 골반 정면", en: "pelvis and hip area focus shot, front view" },
+      { label: "측면", ko: "엉덩이부: 엉덩이 측면", en: "hip and buttocks side profile shot" },
+      { label: "후면", ko: "엉덩이부: 엉덩이 후면 (뒷모습)", en: "buttocks and rear hip focus shot, back view" },
+      { label: "아래에서 본", ko: "엉덩이부: 아래에서 본 (로우앵글)", en: "hip and buttocks shot, low angle, looking up" }
+    ]
+  },
+  {
+    group: "손 클로즈업",
+    icon: "🖐️",
+    items: [
+      { label: "손등", ko: "손 클로즈업: 손등", en: "detailed close-up of back of hand, elegant hand gesture, clean manicure" },
+      { label: "손바닥", ko: "손 클로즈업: 손바닥", en: "detailed close-up of open palm, graceful hand gesture, finger detail" }
+    ]
+  },
+  {
+    group: "발 클로즈업",
+    icon: "🦶",
+    items: [
+      { label: "발등", ko: "발 클로즈업: 발등 (맨발)", en: "detailed close-up of top of feet and toes, feet arch, bare feet" },
+      { label: "발바닥", ko: "발 클로즈업: 발바닥", en: "detailed close-up of sole of bare foot, foot sole texture" },
+      { label: "발 정면", ko: "발 클로즈업: 발 정면", en: "detailed close-up of feet front view, toes and ankle detail" },
+      { label: "발 45도 측면", ko: "발 클로즈업: 발 45도 측면", en: "detailed close-up of feet three-quarter view, ankle line" },
+      { label: "발 측면", ko: "발 클로즈업: 발 측면", en: "detailed close-up of feet side profile, ankle and heel line" }
     ]
   }
 ];

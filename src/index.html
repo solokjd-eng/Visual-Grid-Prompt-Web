@@ -217,13 +217,29 @@
         </div>
 
         <div class="area-editor-section" style="margin-top: 14px;">
-          <!-- 1. 기본 샷 / 구도 프리셋 -->
-          <div class="form-group">
-            <label class="form-label" for="preset-select">
+          <!-- 1. 기본 샷 / 구도 프리셋 (윈도우 탐색기형 트리 셀렉터) -->
+          <div class="form-group" style="position: relative;">
+            <label class="form-label" id="preset-tree-label">
               <span>⚡ 기본 프리셋 (샷 / 구도)</span>
-              <span class="form-label-tag">선택 시 즉시 구도 교체</span>
+              <span class="form-label-tag">클릭하여 탐색기 열기</span>
             </label>
-            <select class="form-select" id="preset-select"></select>
+            <div class="tree-select-wrapper" id="preset-tree-wrapper">
+              <button type="button" class="tree-select-btn" id="preset-tree-btn">
+                <span class="tree-btn-icon">⚡</span>
+                <span class="tree-btn-text" id="preset-tree-selected-text">▼ ⚡ 기본 샷 / 구도 선택 (탐색기 트리)</span>
+                <span class="tree-btn-arrow" id="preset-tree-arrow">▾</span>
+              </button>
+              
+              <!-- Dropdown Popover (Explorer Tree Menu) -->
+              <div class="tree-menu-popover collapsed" id="preset-tree-popover">
+                <div class="tree-menu-search-wrap">
+                  <input type="text" id="preset-tree-search" class="tree-menu-search" placeholder="🔍 구도 / 부위 검색 (예: 쇄골, 전신, 발등...)">
+                </div>
+                <div class="tree-menu-body" id="preset-tree-body">
+                  <!-- Dynamically populated folders and items via JS -->
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- 2. 나만의 커스텀 프리셋 전용 셀렉트 -->

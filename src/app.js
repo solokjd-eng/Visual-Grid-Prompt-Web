@@ -196,8 +196,7 @@ function applyArtStyle(style) {
   state.activeArtStyle = style.id;
   state.prefixPrompt = style.prefix;
   state.suffixPrompt = style.suffix;
-  state.whiteBg = style.whiteBg;
-  state.gridBorders = style.gridBorders;
+  // 사용자가 수동 설정한 백색 배경(whiteBg) 및 그리드선 설정은 화풍 전환 시 유지 (덮어쓰지 않음)
 
   // Update active UI classes on style buttons
   if (elements.artStylesContainer) {
@@ -206,7 +205,7 @@ function applyArtStyle(style) {
     });
   }
 
-  // Sync toggle checkboxes
+  // Sync toggle checkboxes (현재 사용자 설정 상태 유지)
   if (elements.toggleWhiteBg) {
     elements.toggleWhiteBg.checked = state.whiteBg;
     elements.toggleWhiteBg.parentElement.classList.toggle("active", state.whiteBg);
@@ -1427,9 +1426,7 @@ function updateUIInputs() {
 
     elements.editorCard.style.setProperty('--active-area-color', palette.border);
     elements.editorCard.style.setProperty('--active-area-glow', palette.glow);
-    elements.editorCard.style.setProperty('--active-area-bg', palette.bg);
-
-    elements.activeAreaTitle.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${palette.border};box-shadow:0 0 10px ${palette.border};margin-right:6px;"></span>영역 [${current.id}] 프롬프트 설정 <span style="font-size:10px;background:${palette.border};color:#000;padding:2px 7px;border-radius:10px;font-weight:800;margin-left:6px;box-shadow:0 0 8px ${palette.glow};">선택됨 (ACTIVE)</span>`;
+    elements.activeAreaTitle.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${palette.border};box-shadow:0 0 10px ${palette.border};flex-shrink:0;"></span><span style="white-space:nowrap;">영역 [${current.id}] 프롬프트 설정</span><span style="font-size:10px;background:${palette.border};color:#000;padding:2px 7px;border-radius:10px;font-weight:800;box-shadow:0 0 8px ${palette.glow};white-space:nowrap;display:inline-block;flex-shrink:0;">선택됨 (ACTIVE)</span>`;
     
     const spatial = getSpatialDescription(current.c1, current.c2, current.r1, current.r2, state.cols, state.rows);
     elements.activeAreaSpatialBadge.textContent = `${spatial.direction} (${spatial.grid})`;

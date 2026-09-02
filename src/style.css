@@ -231,18 +231,32 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .card-title {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  display: flex;
+  font-weight: 700;
+  color: #ffffff;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#active-area-spatial {
+  font-size: 11px;
+  color: var(--accent-cyan);
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: auto;
+  background: rgba(0, 240, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
 }
 
 /* Templates Bar */

@@ -1082,80 +1082,112 @@ body {
   transform: translateY(-1px);
 }
 
-/* ==========================================================================
-   Custom Presets Section & Collapsible Accordion
-   ========================================================================== */
-
-.custom-presets-section {
-  margin-top: 8px;
-  background: rgba(161, 0, 255, 0.08);
-  border: 1px solid rgba(161, 0, 255, 0.35);
-  border-radius: var(--radius-sm);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: all var(--transition-normal);
+.custom-select-glow {
+  border: 1.5px solid var(--accent-magenta) !important;
+  box-shadow: 0 0 10px rgba(161, 0, 255, 0.25) !important;
+  color: #fff !important;
 }
 
-.custom-presets-header {
+.custom-select-glow:focus {
+  border-color: #ff00ff !important;
+  box-shadow: 0 0 16px rgba(255, 0, 255, 0.5) !important;
+}
+
+/* ==========================================================================
+   Custom Presets Management Drawer (버튼 클릭 시 아래로 확장되는 관리 창)
+   ========================================================================== */
+
+.custom-manage-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.btn-manage-toggle {
+  background: linear-gradient(135deg, rgba(161, 0, 255, 0.16) 0%, rgba(20, 26, 44, 0.8) 100%);
+  border: 1px solid rgba(161, 0, 255, 0.45);
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 10px;
+  width: 100%;
   cursor: pointer;
   user-select: none;
-  background: rgba(20, 16, 36, 0.65);
   transition: all var(--transition-fast);
+  box-sizing: border-box;
 }
 
-.custom-presets-header:hover {
-  background: rgba(161, 0, 255, 0.18);
+.btn-manage-toggle:hover {
+  background: linear-gradient(135deg, rgba(161, 0, 255, 0.3) 0%, rgba(30, 40, 68, 0.9) 100%);
+  border-color: var(--accent-magenta);
+  box-shadow: 0 0 12px var(--accent-magenta-glow);
 }
 
-.custom-presets-title {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--accent-magenta);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.btn-manage-toggle.open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: var(--accent-magenta);
+  background: rgba(161, 0, 255, 0.25);
 }
 
-.accordion-arrow {
+.manage-toggle-icon {
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+.manage-toggle-text {
+  flex: 1;
+  text-align: left;
+}
+
+.manage-toggle-arrow {
   font-size: 10px;
-  display: inline-block;
-  transition: transform var(--transition-normal);
   color: var(--accent-cyan);
+  transition: transform var(--transition-normal);
 }
 
-.custom-presets-section.collapsed .accordion-arrow {
-  transform: rotate(-90deg);
+.btn-manage-toggle.open .manage-toggle-arrow {
+  transform: rotate(180deg);
 }
 
-.custom-presets-actions {
+.custom-manage-drawer {
+  background: rgba(10, 14, 26, 0.96);
+  border: 1px solid var(--accent-magenta);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: 10px;
   display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.custom-presets-body {
-  max-height: 220px;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 250px;
   overflow-y: auto;
-  padding: 8px 10px;
-  border-top: 1px dashed rgba(161, 0, 255, 0.25);
-  transition: max-height var(--transition-normal), opacity var(--transition-normal), padding var(--transition-normal);
-  scrollbar-width: thin;
+  transition: max-height 0.25s ease, opacity 0.25s ease, padding 0.25s ease;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
 }
 
-.custom-presets-section.collapsed .custom-presets-body {
+.custom-manage-drawer.collapsed {
   max-height: 0;
   opacity: 0;
   padding-top: 0;
   padding-bottom: 0;
-  border-top-color: transparent;
+  border: none;
+  overflow: hidden;
   pointer-events: none;
+}
+
+.custom-manage-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed rgba(161, 0, 255, 0.25);
 }
 
 .custom-chips-container {

@@ -70,17 +70,16 @@ const elements = {
   editorCard: document.getElementById("area-editor-card"),
   activeAreaTitle: document.getElementById("active-area-title"),
   activeAreaSpatialBadge: document.getElementById("active-area-spatial"),
+  presetSelect: document.getElementById("preset-select"),
+  customPresetSelect: document.getElementById("custom-preset-select"),
   inputKoPrompt: document.getElementById("input-ko-prompt"),
   inputEnPrompt: document.getElementById("input-en-prompt"),
   btnTranslate: document.getElementById("btn-translate"),
   btnDeleteArea: document.getElementById("btn-delete-area"),
-  presetSelect: document.getElementById("preset-select"),
-  chipsContainer: document.getElementById("chips-container"),
 
-  // Custom Presets & Modal
-  customPresetsSection: document.getElementById("custom-presets-section"),
-  customPresetsToggle: document.getElementById("custom-presets-toggle"),
-  customPresetsCount: document.getElementById("custom-presets-count"),
+  // Custom Presets Management Drawer & Modal
+  btnToggleCustomManage: document.getElementById("btn-toggle-custom-manage"),
+  customManageDrawer: document.getElementById("custom-manage-drawer"),
   customChipsContainer: document.getElementById("custom-chips-container"),
   btnAddCustomPreset: document.getElementById("btn-add-custom-preset"),
   btnSaveAsPreset: document.getElementById("btn-save-as-preset"),
@@ -361,10 +360,35 @@ function renderCharacterHistoryChips() {
 }
 
 /**
- * Initialize Preset Dropdown & Chips (원본 ComfyUI 노드 100% 동일 그룹 복원)
+ * =============================================================================
+ * Preset Application (구도 교체 Replace 로직)
+ * =============================================================================
+ */
+function setPresetToActiveArea({ ko, en }) {
+  const activeArea = getActiveArea();
+  if (!activeArea) {
+    showToast("먼저 캔버스에서 영역(Area)을 선택하세요!");
+    return;
+  }
+
+  // 기존 내용을 새로 선택한 프리셋으로 1:1 교체 (Replace)
+  activeArea.koPrompt = ko || "";
+  activeArea.prompt = en || ko || "";
+
+  if (elements.inputKoPrompt) elements.inputKoPrompt.value = activeArea.koPrompt;
+  if (elements.inputEnPrompt) elements.inputEnPrompt.value = activeArea.prompt;
+
+  renderAreas();
+  updatePromptOutput();
+  showToast(`구도가 '${ko}'(으)로 교체되었습니다.`);
+}
+
+/**
+ * Initialize Default Preset Dropdown (기본 샷 / 구도 전용)
  */
 function initPresetsUI() {
-  elements.presetSelect.innerHTML = `<option value="">▼ ⚡ 프리셋 선택 (샷/구도)</option>`;
+  if (!elements.presetSelect) return;
+  elements.presetSelect.innerHTML = `<option value="">▼ ⚡ 기본 프리셋 (샷 / 구도)</option>`;
   
   PRESET_GROUPS.forEach(grp => {
     const optGroup = document.createElement("optgroup");
@@ -382,36 +406,22 @@ function initPresetsUI() {
     elements.presetSelect.appendChild(optGroup);
   });
 
-  // Quick Chips
-  const sampleChips = [
-    { label: "얼굴 정면", ko: "얼굴 정면", en: "face, front view, detailed facial features" },
-    { label: "얼굴 45도", ko: "얼굴 45도 측면", en: "face, three-quarter view, 45-degree angle" },
-    { label: "얼굴 초근접", ko: "얼굴 초근접 정면", en: "extreme close-up face, front view, macro detail" },
-    { label: "상반신 (가슴)", ko: "상반신 가슴 정면", en: "bust shot, upper body, front view" },
-    { label: "상반신 (허리)", ko: "상반신 허리 정면", en: "waist shot, waist up, front view" },
-    { label: "전신 정면", ko: "전신 정면", en: "full body, front view" },
-    { label: "전신 45도", ko: "전신 45도 측면", en: "full body, three-quarter view, 45-degree angle" },
-    { label: "하이앵글", ko: "얼굴 하이앵글 (위에서)", en: "face, high angle, from above" },
-    { label: "로우앵글", ko: "얼굴 로우앵글 (아래에서)", en: "face, low angle, from below" },
-    { label: "사이버펑크 도시", ko: "사이버펑크 도시", en: "cyberpunk neon city, glowing holographic lights" }
-  ];
-
-  elements.chipsContainer.innerHTML = "";
-  sampleChips.forEach(chip => {
-    const btn = document.createElement("button");
-    btn.className = "chip-btn";
-    btn.type = "button";
-    btn.textContent = `+ ${chip.label}`;
-    btn.addEventListener("click", () => {
-      appendChipToActiveArea(chip);
-    });
-    elements.chipsContainer.appendChild(btn);
+  // 선택 시 즉시 구도 교체
+  elements.presetSelect.addEventListener("change", (e) => {
+    const val = e.target.value;
+    if (!val) return;
+    const selectedOpt = e.target.selectedOptions[0];
+    const ko = selectedOpt ? selectedOpt.dataset.ko : "";
+    const en = selectedOpt ? selectedOpt.dataset.en : val;
+    
+    setPresetToActiveArea({ ko, en });
+    e.target.value = ""; // 재선택 가능하도록 플레이스홀더로 리셋
   });
 }
 
 /**
  * =============================================================================
- * Custom Presets Management (추가, 수정, 삭제, 저장, 마우스 드래그 순서 변경)
+ * Custom Presets Management (나만의 프리셋 셀렉트, 관리 서랍, Drag & Drop)
  * =============================================================================
  */
 
@@ -437,11 +447,25 @@ function initCustomPresetsUI() {
 
   renderCustomPresets();
 
-  if (elements.customPresetsToggle) {
-    elements.customPresetsToggle.addEventListener("click", () => {
-      if (elements.customPresetsSection) {
-        elements.customPresetsSection.classList.toggle("collapsed");
-      }
+  // 커스텀 프리셋 셀렉트 변경 시 즉시 구도 교체
+  if (elements.customPresetSelect) {
+    elements.customPresetSelect.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (!val) return;
+      const selectedOpt = e.target.selectedOptions[0];
+      const ko = selectedOpt ? selectedOpt.dataset.ko : "";
+      const en = selectedOpt ? selectedOpt.dataset.en : val;
+      
+      setPresetToActiveArea({ ko, en });
+      e.target.value = ""; // 리셋
+    });
+  }
+
+  // 관리 서랍 토글 (아래로 커지면서 펼쳐짐)
+  if (elements.btnToggleCustomManage && elements.customManageDrawer) {
+    elements.btnToggleCustomManage.addEventListener("click", () => {
+      const isCollapsed = elements.customManageDrawer.classList.toggle("collapsed");
+      elements.btnToggleCustomManage.classList.toggle("open", !isCollapsed);
     });
   }
 
@@ -478,53 +502,31 @@ function initCustomPresetsUI() {
   }
 }
 
-function updatePresetSelectOptions() {
-  if (!elements.presetSelect) return;
-  elements.presetSelect.innerHTML = `<option value="">▼ ⚡ 프리셋 선택 (샷/구도/커스텀)</option>`;
+function updateCustomPresetSelect() {
+  if (!elements.customPresetSelect) return;
+  const count = state.customPresets ? state.customPresets.length : 0;
+  elements.customPresetSelect.innerHTML = `<option value="">▼ ⭐ 나만의 프리셋 (${count}개 등록됨)</option>`;
 
-  // 1. Custom Presets at the top of dropdown
   if (state.customPresets && state.customPresets.length > 0) {
-    const customGroup = document.createElement("optgroup");
-    customGroup.label = "⭐ 나만의 커스텀 프리셋 (Custom Presets)";
     state.customPresets.forEach(item => {
       const opt = document.createElement("option");
       opt.value = item.en || item.ko;
       opt.textContent = `⭐ ${item.label || item.ko}`;
       opt.dataset.ko = item.ko;
       opt.dataset.en = item.en || item.ko;
-      customGroup.appendChild(opt);
+      elements.customPresetSelect.appendChild(opt);
     });
-    elements.presetSelect.appendChild(customGroup);
   }
-
-  // 2. Built-in groups
-  PRESET_GROUPS.forEach(grp => {
-    const optGroup = document.createElement("optgroup");
-    optGroup.label = grp.group;
-    grp.items.forEach(item => {
-      const opt = document.createElement("option");
-      opt.value = item.en;
-      opt.textContent = item.label;
-      opt.dataset.ko = item.ko;
-      opt.dataset.en = item.en;
-      optGroup.appendChild(opt);
-    });
-    elements.presetSelect.appendChild(optGroup);
-  });
 }
 
 function renderCustomPresets() {
-  if (elements.customPresetsCount) {
-    elements.customPresetsCount.textContent = state.customPresets.length;
-  }
-
-  updatePresetSelectOptions();
+  updateCustomPresetSelect();
 
   if (!elements.customChipsContainer) return;
   elements.customChipsContainer.innerHTML = "";
 
   if (!state.customPresets || state.customPresets.length === 0) {
-    elements.customChipsContainer.innerHTML = `<span style="font-size:10.5px; color:var(--text-muted); font-style:italic;">등록된 커스텀 프리셋이 없습니다. [➕ 새 프리셋 추가]를 눌러보세요.</span>`;
+    elements.customChipsContainer.innerHTML = `<span style="font-size:10.5px; color:var(--text-muted); font-style:italic; padding:4px;">등록된 커스텀 프리셋이 없습니다. [➕ 새 프리셋 생성]을 눌러보세요.</span>`;
     return;
   }
 
@@ -540,13 +542,13 @@ function renderCustomPresets() {
     handle.textContent = "⠿";
     handle.title = "마우스로 끌어서 순서 변경 (Drag & Drop)";
 
-    // Label span (click to append to active area)
+    // Label span (click to replace active area)
     const label = document.createElement("span");
     label.className = "custom-chip-label";
     label.textContent = item.label || item.ko;
-    label.title = `클릭하여 [${item.label || item.ko}] 프롬프트 추가`;
+    label.title = `클릭하여 [${item.label || item.ko}] 구도로 교체`;
     label.addEventListener("click", () => {
-      appendChipToActiveArea({ ko: item.ko, en: item.en || item.ko });
+      setPresetToActiveArea({ ko: item.ko, en: item.en || item.ko });
     });
 
     // Action buttons (edit, delete)

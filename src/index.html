@@ -217,40 +217,25 @@
         </div>
 
         <div class="area-editor-section" style="margin-top: 14px;">
-          <!-- Preset Dropdown -->
+          <!-- 1. 기본 샷 / 구도 프리셋 -->
           <div class="form-group">
             <label class="form-label" for="preset-select">
-              <span>샷 / 구도 프리셋</span>
-              <span class="form-label-tag">선택 시 자동 입력</span>
+              <span>⚡ 기본 프리셋 (샷 / 구도)</span>
+              <span class="form-label-tag">선택 시 즉시 구도 교체</span>
             </label>
             <select class="form-select" id="preset-select"></select>
           </div>
 
-          <!-- Quick Tag Chips (기본 프리셋) -->
-          <div class="preset-chips-wrap" id="chips-container">
-            <!-- Injected via JS -->
+          <!-- 2. 나만의 커스텀 프리셋 전용 셀렉트 -->
+          <div class="form-group">
+            <label class="form-label" for="custom-preset-select">
+              <span>⭐ 나만의 프리셋 (커스텀)</span>
+              <span class="form-label-tag" id="custom-preset-select-tag">선택 시 구도 교체</span>
+            </label>
+            <select class="form-select custom-select-glow" id="custom-preset-select"></select>
           </div>
 
-          <!-- Custom Presets Section (커스텀 프리셋: 드롭다운 펼치기/접기 + 드래그 순서 변경) -->
-          <div class="custom-presets-section collapsible open" id="custom-presets-section">
-            <div class="custom-presets-header" id="custom-presets-toggle" title="클릭하여 커스텀 프리셋 목록 펼치기/접기">
-              <div class="custom-presets-title">
-                <span class="accordion-arrow" id="custom-presets-arrow">▼</span>
-                <span>⭐ 나만의 커스텀 프리셋 (<span id="custom-presets-count">0</span>)</span>
-              </div>
-              <div class="custom-presets-actions" onclick="event.stopPropagation();">
-                <button type="button" id="btn-save-as-preset" class="btn btn-secondary btn-xs" title="현재 입력창의 내용을 새 프리셋으로 등록">💾 현재 입력 등록</button>
-                <button type="button" id="btn-add-custom-preset" class="btn btn-primary btn-xs" title="새 커스텀 프리셋 직접 추가">➕ 새 프리셋 추가</button>
-              </div>
-            </div>
-            <div class="custom-presets-body" id="custom-presets-body">
-              <div class="custom-chips-container" id="custom-chips-container">
-                <!-- Dynamic Custom Chips injected via JS, draggable -->
-              </div>
-            </div>
-          </div>
-
-          <!-- Korean Direct Input -->
+          <!-- 3. 직접 한글 입력 -->
           <div class="form-group">
             <label class="form-label" for="input-ko-prompt">
               <span>직접 한글 입력 (Korean Prompt)</span>
@@ -259,7 +244,25 @@
             <textarea class="form-textarea" id="input-ko-prompt" placeholder="예: 전신 45도 반측면, 은발에 푸른 눈, 밝은 미소..."></textarea>
           </div>
 
-          <!-- English Output/Input -->
+          <!-- 4. 커스텀 프리셋 관리 토글 & 확장 서랍 (Drawer) -->
+          <div class="custom-manage-wrapper">
+            <button type="button" class="btn-manage-toggle" id="btn-toggle-custom-manage">
+              <span class="manage-toggle-icon">⚙️</span>
+              <span class="manage-toggle-text">커스텀 프리셋 관리 (생성 / 수정 / 삭제 / 순서 정하기)</span>
+              <span class="manage-toggle-arrow" id="manage-drawer-arrow">▼</span>
+            </button>
+            <div class="custom-manage-drawer collapsed" id="custom-manage-drawer">
+              <div class="custom-manage-header-actions">
+                <button type="button" id="btn-save-as-preset" class="btn btn-secondary btn-xs" title="현재 입력창의 내용을 새 프리셋으로 등록">💾 현재 입력 등록</button>
+                <button type="button" id="btn-add-custom-preset" class="btn btn-primary btn-xs" title="새 커스텀 프리셋 직접 추가">➕ 새 프리셋 생성</button>
+              </div>
+              <div class="custom-chips-container" id="custom-chips-container">
+                <!-- Draggable Custom Chips injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. 최종 영문 프롬프트 -->
           <div class="form-group">
             <label class="form-label" for="input-en-prompt">
               <span>최종 영문 프롬프트 (English Translated)</span>

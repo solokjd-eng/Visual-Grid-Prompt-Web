@@ -341,12 +341,26 @@ function openUpdateModal(latestVer, releaseData, isNewAvailable) {
 
   if (elements.btnDownloadUpdate) {
     elements.btnDownloadUpdate.style.display = isNewAvailable ? "inline-block" : "none";
+    const isWeb = window.location.protocol.startsWith("http");
+    elements.btnDownloadUpdate.textContent = isWeb 
+      ? "🚀 지금 최신 버전으로 즉시 새로고침 (0초 적용)" 
+      : "⚡ 지금 최신 버전 다운로드 (HTML)";
   }
 
   elements.modalUpdate.style.display = "flex";
 }
 
 function downloadLatestRelease() {
+  const isWeb = window.location.protocol.startsWith("http");
+  if (isWeb) {
+    showToast("최신 버전으로 즉시 새로고침하여 적용합니다...");
+    setTimeout(() => {
+      window.location.reload(true);
+    }, 300);
+    return;
+  }
+
+  // Local file usage: Open release download
   if (latestReleaseData && latestReleaseData.assets && latestReleaseData.assets.length > 0) {
     const htmlAsset = latestReleaseData.assets.find(a => a.name.endsWith(".html")) || latestReleaseData.assets[0];
     if (htmlAsset && htmlAsset.browser_download_url) {
@@ -355,7 +369,7 @@ function downloadLatestRelease() {
       return;
     }
   }
-  window.open("https://github.com/solokjd-eng/Visual-Grid-Prompt-Web/releases/latest", "_blank");
+  window.open("https://solokjd-eng.github.io/Visual-Grid-Prompt-Web/", "_blank");
 }
 
 // =============================================================================

@@ -247,18 +247,6 @@ body {
   flex-shrink: 0;
 }
 
-#active-area-spatial {
-  font-size: 11px;
-  color: var(--accent-cyan);
-  font-weight: 600;
-  white-space: nowrap;
-  margin-left: auto;
-  background: rgba(0, 240, 255, 0.08);
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 240, 255, 0.2);
-}
-
 /* Templates Bar */
 .templates-scroll {
   display: flex;

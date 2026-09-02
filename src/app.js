@@ -1428,10 +1428,6 @@ function updateUIInputs() {
     elements.editorCard.style.setProperty('--active-area-glow', palette.glow);
     elements.activeAreaTitle.innerHTML = `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${palette.border};box-shadow:0 0 10px ${palette.border};flex-shrink:0;"></span><span style="white-space:nowrap;">영역 [${current.id}] 프롬프트 설정</span><span style="font-size:10px;background:${palette.border};color:#000;padding:2px 7px;border-radius:10px;font-weight:800;box-shadow:0 0 8px ${palette.glow};white-space:nowrap;display:inline-block;flex-shrink:0;">선택됨 (ACTIVE)</span>`;
     
-    const spatial = getSpatialDescription(current.c1, current.c2, current.r1, current.r2, state.cols, state.rows);
-    elements.activeAreaSpatialBadge.textContent = `${spatial.direction} (${spatial.grid})`;
-    elements.activeAreaSpatialBadge.style.color = palette.border;
-
     elements.inputKoPrompt.value = current.koPrompt || "";
     elements.inputKoPrompt.placeholder = `👉 [영역 ${current.id}] 에 적용할 한글 프롬프트를 입력하세요 (예: 전신 정면, 은발에 푸른 눈...)`;
 
@@ -1445,7 +1441,6 @@ function updateUIInputs() {
     elements.editorCard.style.removeProperty('--active-area-glow');
     elements.editorCard.style.removeProperty('--active-area-bg');
     elements.activeAreaTitle.textContent = "영역을 선택하거나 새로 드래그하세요";
-    elements.activeAreaSpatialBadge.textContent = "";
     elements.inputKoPrompt.value = "";
     elements.inputKoPrompt.placeholder = "편집할 영역을 먼저 선택하세요";
     elements.inputEnPrompt.value = "";

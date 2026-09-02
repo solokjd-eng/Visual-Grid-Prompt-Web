@@ -365,7 +365,7 @@ function renderCharacterHistoryChips() {
  * =============================================================================
  */
 function setPresetToActiveArea({ ko, en }) {
-  const activeArea = getActiveArea();
+  const activeArea = getSelectedArea();
   if (!activeArea) {
     showToast("먼저 캔버스에서 영역(Area)을 선택하세요!");
     return;
@@ -380,6 +380,7 @@ function setPresetToActiveArea({ ko, en }) {
 
   renderAreas();
   updatePromptOutput();
+  saveState();
   showToast(`구도가 '${ko}'(으)로 교체되었습니다.`);
 }
 
@@ -1549,15 +1550,6 @@ function bindEvents() {
   elements.btnDeleteArea.addEventListener("click", () => {
     if (state.selectedAreaId) {
       deleteArea(state.selectedAreaId);
-    }
-  });
-
-  // Preset dropdown selection
-  elements.presetSelect.addEventListener("change", (e) => {
-    const opt = e.target.selectedOptions[0];
-    if (opt && opt.dataset.ko) {
-      appendChipToActiveArea({ ko: opt.dataset.ko, en: opt.dataset.en });
-      e.target.value = "";
     }
   });
 

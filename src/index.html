@@ -20,6 +20,19 @@
     </div>
 
     <div class="header-actions">
+      <!-- 1. Theme Toggle Button (Light / Dark) -->
+      <button class="btn-theme-toggle" id="btn-theme-toggle" title="라이트 모드 / 다크 모드 전환" aria-label="테마 전환">
+        <span class="theme-icon" id="theme-icon">🌙</span>
+        <span class="theme-label" id="theme-label">다크</span>
+      </button>
+
+      <!-- 2. Update Checker Badge / Button -->
+      <button class="btn-update-check" id="btn-check-update" title="최신 버전 업데이트 확인">
+        <span class="update-icon" id="update-icon">🔄</span>
+        <span class="update-text" id="update-badge-text">v1.0.0</span>
+        <span class="update-pulse" id="update-pulse-dot" style="display: none;"></span>
+      </button>
+
       <button class="btn-secondary" id="btn-import-json" title="JSON 프리셋 파일 불러오기">
         📥 불러오기
       </button>
@@ -387,6 +400,56 @@
       <div class="modal-footer">
         <button type="button" id="btn-cancel-preset" class="btn btn-secondary btn-sm">취소</button>
         <button type="button" id="btn-save-preset-confirm" class="btn btn-primary btn-sm">✨ 저장 및 등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Notification & Download Modal -->
+  <div class="modal-overlay" id="modal-update" style="display: none;">
+    <div class="modal-card update-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🚀</span>
+          <h3 id="update-modal-title">Visual Grid Prompt Studio 업데이트</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-update-modal" title="닫기">&times;</button>
+      </div>
+      
+      <div class="modal-body update-modal-body">
+        <div class="update-version-row">
+          <div class="version-badge current">
+            <span class="ver-tag">현재 버전</span>
+            <span class="ver-val" id="update-current-ver">v1.0.0</span>
+          </div>
+          <span class="version-arrow">➜</span>
+          <div class="version-badge latest">
+            <span class="ver-tag">최신 버전</span>
+            <span class="ver-val" id="update-latest-ver">v1.0.0</span>
+          </div>
+        </div>
+
+        <div class="update-status-box" id="update-status-box">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <div class="update-release-notes" id="update-release-notes" style="display: none;">
+          <h4>📋 새로운 업데이트 내용 (Changelog)</h4>
+          <div class="notes-content" id="update-notes-content"></div>
+        </div>
+
+        <div class="update-auto-check-wrap">
+          <label class="update-auto-check-label">
+            <input type="checkbox" id="chk-auto-update" checked>
+            <span>앱 실행 시 자동으로 최신 버전 확인하기</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-update">닫기</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-download-update" style="display: none;">
+          ⚡ 지금 최신 버전 다운로드 (HTML)
+        </button>
       </div>
     </div>
   </div>

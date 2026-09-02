@@ -155,6 +155,79 @@ body {
   gap: 8px;
 }
 
+/* Theme Toggle Button */
+.btn-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  color: var(--text-primary);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.btn-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan-glow);
+}
+
+.theme-icon {
+  font-size: 13px;
+}
+
+/* Update Checker Button */
+.btn-update-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 20px;
+  color: var(--accent-cyan);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.btn-update-check:hover {
+  background: rgba(0, 240, 255, 0.16);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 12px var(--accent-cyan-glow);
+}
+
+.btn-update-check.has-update {
+  background: linear-gradient(135deg, rgba(255, 150, 0, 0.2), rgba(255, 0, 127, 0.2));
+  border-color: #ff9900;
+  color: #ffbb33;
+  box-shadow: 0 0 14px rgba(255, 153, 0, 0.4);
+  animation: pulseUpdate 2s infinite ease-in-out;
+}
+
+@keyframes pulseUpdate {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); box-shadow: 0 0 18px rgba(255, 153, 0, 0.6); }
+}
+
+.update-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff4444;
+  box-shadow: 0 0 8px #ff4444;
+  display: inline-block;
+}
+
 /* ==========================================================================
    Main Layout Structure (Adaptive 100vh Fill)
    ========================================================================== */
@@ -1738,6 +1811,358 @@ body {
   }
 }
 
+/* ==========================================================================
+   Update Modal Styles
+   ========================================================================== */
+
+.update-modal-card {
+  max-width: 460px;
+  width: 90%;
+}
+
+.update-version-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 12px 0 16px;
+}
+
+.version-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  min-width: 90px;
+}
+
+.version-badge.latest {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.ver-tag {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.ver-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  font-family: var(--font-mono);
+}
+
+.version-arrow {
+  font-size: 16px;
+  color: var(--accent-cyan);
+}
+
+.update-status-box {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+}
+
+.update-status-box.latest {
+  border-color: rgba(0, 255, 136, 0.35);
+  background: rgba(0, 255, 136, 0.08);
+  color: #00ff88;
+}
+
+.update-status-box.has-update {
+  border-color: rgba(255, 153, 0, 0.45);
+  background: rgba(255, 153, 0, 0.12);
+  color: #ffbb33;
+}
+
+.update-release-notes {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 160px;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.update-release-notes h4 {
+  font-size: 11.5px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.update-auto-check-wrap {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.update-auto-check-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ==========================================================================
+   Light Theme System (Studio Clean Light - Ultra Legibility)
+   ========================================================================== */
+
+[data-theme="light"] {
+  --bg-main: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #e2e8f0;
+  --bg-glass: rgba(255, 255, 255, 0.94);
+  --bg-glass-card: rgba(255, 255, 255, 0.96);
+  --bg-input: #ffffff;
+  
+  --border-subtle: #cbd5e1;
+  --border-light: #94a3b8;
+  --border-focus: #0284c7;
+
+  --accent-cyan: #0284c7;
+  --accent-cyan-glow: rgba(2, 132, 199, 0.25);
+  --accent-purple: #7c3aed;
+  --accent-purple-glow: rgba(124, 58, 237, 0.25);
+  --accent-pink: #db2777;
+  --accent-yellow: #d97706;
+  --accent-emerald: #059669;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-accent: #0284c7;
+
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 15px rgba(2, 132, 199, 0.2);
+}
+
+[data-theme="light"] body {
+  background-color: #f1f5f9;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(2, 132, 199, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(124, 58, 237, 0.07) 0%, transparent 40%),
+    linear-gradient(180deg, #f8fafc 0%, #edf2f7 100%);
+  color: #0f172a;
+}
+
+[data-theme="light"] .app-header {
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom-color: #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .brand-info h1 {
+  background: linear-gradient(90deg, #0f172a, #334155);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .card:hover {
+  border-color: #94a3b8;
+}
+
+[data-theme="light"] .card-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .canvas-wrapper {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .grid-cell {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .form-input,
+[data-theme="light"] .form-select,
+[data-theme="light"] .form-textarea,
+[data-theme="light"] #input-ko-prompt,
+[data-theme="light"] #input-en-prompt {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] #input-ko-prompt {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+[data-theme="light"] #input-ko-prompt:focus {
+  background: #ffffff;
+  box-shadow: 0 0 16px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="light"] .prompt-output {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .btn-art-style {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .btn-art-style:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+[data-theme="light"] .btn-art-style.active {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+  font-weight: 700;
+}
+
+[data-theme="light"] .btn-secondary {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="light"] .btn-theme-toggle {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .btn-update-check {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  color: #0284c7;
+}
+
+[data-theme="light"] .tree-select-btn {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .tree-menu-popover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #0284c7;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .tree-menu-search {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .tree-folder {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+[data-theme="light"] .tree-folder:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+[data-theme="light"] .tree-item {
+  color: #334155;
+}
+
+[data-theme="light"] .tree-item:hover {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+[data-theme="light"] .custom-manage-drawer {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .custom-chip {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+[data-theme="light"] .toggle-wrapper {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .toggle-wrapper.active {
+  background: #f0fdf4;
+  border-color: #059669;
+}
+
+[data-theme="light"] .modal-card {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .modal-header {
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="light"] .modal-header h3 {
+  color: #0f172a;
+}
+
+[data-theme="light"] .version-badge {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .version-badge.latest {
+  background: #e0f2fe;
+  border-color: #0284c7;
+}
+
+[data-theme="light"] .ver-val {
+  color: #0f172a;
+}
+
+[data-theme="light"] .update-release-notes {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .update-release-notes h4 {
+  color: #0f172a;
+}
+
 </style>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22><text y=%22.9em%22 font-size=%2290%22>📐</text></svg>">
 </head>
@@ -1753,6 +2178,19 @@ body {
     </div>
 
     <div class="header-actions">
+      <!-- 1. Theme Toggle Button (Light / Dark) -->
+      <button class="btn-theme-toggle" id="btn-theme-toggle" title="라이트 모드 / 다크 모드 전환" aria-label="테마 전환">
+        <span class="theme-icon" id="theme-icon">🌙</span>
+        <span class="theme-label" id="theme-label">다크</span>
+      </button>
+
+      <!-- 2. Update Checker Badge / Button -->
+      <button class="btn-update-check" id="btn-check-update" title="최신 버전 업데이트 확인">
+        <span class="update-icon" id="update-icon">🔄</span>
+        <span class="update-text" id="update-badge-text">v1.0.0</span>
+        <span class="update-pulse" id="update-pulse-dot" style="display: none;"></span>
+      </button>
+
       <button class="btn-secondary" id="btn-import-json" title="JSON 프리셋 파일 불러오기">
         📥 불러오기
       </button>
@@ -2120,6 +2558,56 @@ body {
       <div class="modal-footer">
         <button type="button" id="btn-cancel-preset" class="btn btn-secondary btn-sm">취소</button>
         <button type="button" id="btn-save-preset-confirm" class="btn btn-primary btn-sm">✨ 저장 및 등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Notification & Download Modal -->
+  <div class="modal-overlay" id="modal-update" style="display: none;">
+    <div class="modal-card update-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🚀</span>
+          <h3 id="update-modal-title">Visual Grid Prompt Studio 업데이트</h3>
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-update-modal" title="닫기">&times;</button>
+      </div>
+      
+      <div class="modal-body update-modal-body">
+        <div class="update-version-row">
+          <div class="version-badge current">
+            <span class="ver-tag">현재 버전</span>
+            <span class="ver-val" id="update-current-ver">v1.0.0</span>
+          </div>
+          <span class="version-arrow">➜</span>
+          <div class="version-badge latest">
+            <span class="ver-tag">최신 버전</span>
+            <span class="ver-val" id="update-latest-ver">v1.0.0</span>
+          </div>
+        </div>
+
+        <div class="update-status-box" id="update-status-box">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <div class="update-release-notes" id="update-release-notes" style="display: none;">
+          <h4>📋 새로운 업데이트 내용 (Changelog)</h4>
+          <div class="notes-content" id="update-notes-content"></div>
+        </div>
+
+        <div class="update-auto-check-wrap">
+          <label class="update-auto-check-label">
+            <input type="checkbox" id="chk-auto-update" checked>
+            <span>앱 실행 시 자동으로 최신 버전 확인하기</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-update">닫기</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-download-update" style="display: none;">
+          ⚡ 지금 최신 버전 다운로드 (HTML)
+        </button>
       </div>
     </div>
   </div>
@@ -3134,11 +3622,28 @@ const elements = {
   toggleGridBorders: document.getElementById("toggle-grid-borders"),
   toggleMockup: document.getElementById("toggle-mockup"),
   
+  // Header Controls (Theme & Updates)
+  btnThemeToggle: document.getElementById("btn-theme-toggle"),
+  themeIcon: document.getElementById("theme-icon"),
+  themeLabel: document.getElementById("theme-label"),
+  btnCheckUpdate: document.getElementById("btn-check-update"),
+  updateBadgeText: document.getElementById("update-badge-text"),
+  updatePulseDot: document.getElementById("update-pulse-dot"),
+  modalUpdate: document.getElementById("modal-update"),
+  btnCloseUpdateModal: document.getElementById("btn-close-update-modal"),
+  btnCancelUpdate: document.getElementById("btn-cancel-update"),
+  btnDownloadUpdate: document.getElementById("btn-download-update"),
+  updateCurrentVer: document.getElementById("update-current-ver"),
+  updateLatestVer: document.getElementById("update-latest-ver"),
+  updateStatusBox: document.getElementById("update-status-box"),
+  updateReleaseNotes: document.getElementById("update-release-notes"),
+  updateNotesContent: document.getElementById("update-notes-content"),
+  chkAutoUpdate: document.getElementById("chk-auto-update"),
+
   // Area Editor & Presets (Windows Explorer Tree Selector)
   areaTabs: document.getElementById("area-tabs"),
   editorCard: document.getElementById("area-editor-card"),
   activeAreaTitle: document.getElementById("active-area-title"),
-  activeAreaSpatialBadge: document.getElementById("active-area-spatial"),
   presetTreeWrapper: document.getElementById("preset-tree-wrapper"),
   presetTreeBtn: document.getElementById("preset-tree-btn"),
   presetTreeSelectedText: document.getElementById("preset-tree-selected-text"),
@@ -3200,10 +3705,223 @@ const RATIO_MAP = {
 };
 
 // =============================================================================
+// Theme Management (Light Mode / Dark Mode)
+// =============================================================================
+
+function initThemeUI() {
+  const savedTheme = localStorage.getItem("visual_grid_theme") || "dark";
+  applyTheme(savedTheme);
+
+  if (elements.btnThemeToggle) {
+    elements.btnThemeToggle.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+      localStorage.setItem("visual_grid_theme", next);
+      showToast(`${next === "light" ? "☀️ 라이트 모드" : "🌙 다크 모드"}가 적용되었습니다.`);
+    });
+  }
+}
+
+function applyTheme(theme) {
+  if (document.documentElement && document.documentElement.setAttribute) {
+    document.documentElement.setAttribute("data-theme", theme);
+  } else if (document.body && document.body.setAttribute) {
+    document.body.setAttribute("data-theme", theme);
+  }
+  if (elements.themeIcon) {
+    elements.themeIcon.textContent = theme === "light" ? "☀️" : "🌙";
+  }
+  if (elements.themeLabel) {
+    elements.themeLabel.textContent = theme === "light" ? "라이트" : "다크";
+  }
+}
+
+// =============================================================================
+// Version & Update Checker System (GitHub Releases API)
+// =============================================================================
+
+const CURRENT_APP_VERSION = "v1.0.0";
+const GITHUB_REPO_API = "https://api.github.com/repos/solokjd-eng/Visual-Grid-Prompt-Web/releases/latest";
+let latestReleaseData = null;
+
+function initUpdateCheckerUI() {
+  if (elements.updateBadgeText) {
+    elements.updateBadgeText.textContent = CURRENT_APP_VERSION;
+  }
+
+  // Auto Check preference
+  const autoCheck = localStorage.getItem("vgs_auto_check_update") !== "false";
+  if (elements.chkAutoUpdate) {
+    elements.chkAutoUpdate.checked = autoCheck;
+    elements.chkAutoUpdate.addEventListener("change", (e) => {
+      localStorage.setItem("vgs_auto_check_update", e.target.checked ? "true" : "false");
+    });
+  }
+
+  // Button Click -> Manual Check
+  if (elements.btnCheckUpdate) {
+    elements.btnCheckUpdate.addEventListener("click", () => {
+      checkForUpdates(true);
+    });
+  }
+
+  // Modal Events
+  if (elements.btnCloseUpdateModal) {
+    elements.btnCloseUpdateModal.addEventListener("click", closeUpdateModal);
+  }
+  if (elements.btnCancelUpdate) {
+    elements.btnCancelUpdate.addEventListener("click", closeUpdateModal);
+  }
+  if (elements.modalUpdate) {
+    elements.modalUpdate.addEventListener("click", (e) => {
+      if (e.target === elements.modalUpdate) closeUpdateModal();
+    });
+  }
+
+  if (elements.btnDownloadUpdate) {
+    elements.btnDownloadUpdate.addEventListener("click", downloadLatestRelease);
+  }
+
+  // Auto-check on launch after 1.5 seconds if enabled
+  if (autoCheck) {
+    setTimeout(() => {
+      checkForUpdates(false);
+    }, 1500);
+  }
+}
+
+function closeUpdateModal() {
+  if (elements.modalUpdate) {
+    elements.modalUpdate.style.display = "none";
+  }
+}
+
+async function checkForUpdates(manual = false) {
+  if (typeof fetch === "undefined") return;
+  if (manual && elements.updateBadgeText) {
+    elements.updateBadgeText.textContent = "확인 중...";
+  }
+
+  try {
+    const res = await fetch(GITHUB_REPO_API, {
+      headers: { "Accept": "application/vnd.github.v3+json" }
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    latestReleaseData = data;
+    const latestVer = data.tag_name || data.name || CURRENT_APP_VERSION;
+
+    const hasNewVersion = isVersionNewer(latestVer, CURRENT_APP_VERSION);
+
+    if (hasNewVersion) {
+      // New version available!
+      if (elements.btnCheckUpdate) {
+        elements.btnCheckUpdate.classList.add("has-update");
+      }
+      if (elements.updateBadgeText) {
+        elements.updateBadgeText.textContent = `⚡ ${latestVer}`;
+      }
+      if (elements.updatePulseDot) {
+        elements.updatePulseDot.style.display = "inline-block";
+      }
+
+      openUpdateModal(latestVer, data, true);
+    } else {
+      // Already on latest version
+      if (elements.btnCheckUpdate) {
+        elements.btnCheckUpdate.classList.remove("has-update");
+      }
+      if (elements.updateBadgeText) {
+        elements.updateBadgeText.textContent = CURRENT_APP_VERSION;
+      }
+      if (elements.updatePulseDot) {
+        elements.updatePulseDot.style.display = "none";
+      }
+
+      if (manual) {
+        openUpdateModal(latestVer, data, false);
+      }
+    }
+  } catch (err) {
+    console.warn("Update check failed:", err);
+    if (elements.updateBadgeText) {
+      elements.updateBadgeText.textContent = CURRENT_APP_VERSION;
+    }
+    if (manual) {
+      showToast("업데이트 정보를 확인하지 못했습니다 (인터넷 연결 확인).");
+    }
+  }
+}
+
+function isVersionNewer(latest, current) {
+  const l = latest.replace(/^v/, "").split(".").map(Number);
+  const c = current.replace(/^v/, "").split(".").map(Number);
+
+  for (let i = 0; i < Math.max(l.length, c.length); i++) {
+    const numL = l[i] || 0;
+    const numC = c[i] || 0;
+    if (numL > numC) return true;
+    if (numL < numC) return false;
+  }
+  return false;
+}
+
+function openUpdateModal(latestVer, releaseData, isNewAvailable) {
+  if (!elements.modalUpdate) return;
+
+  if (elements.updateCurrentVer) elements.updateCurrentVer.textContent = CURRENT_APP_VERSION;
+  if (elements.updateLatestVer) elements.updateLatestVer.textContent = latestVer;
+
+  if (elements.updateStatusBox) {
+    if (isNewAvailable) {
+      elements.updateStatusBox.className = "update-status-box has-update";
+      elements.updateStatusBox.innerHTML = `🎉 <strong>새로운 업데이트(${latestVer})</strong>가 준비되어 있습니다!`;
+    } else {
+      elements.updateStatusBox.className = "update-status-box latest";
+      elements.updateStatusBox.innerHTML = `✅ 현재 <strong>최신 버전(${CURRENT_APP_VERSION})</strong>을 사용하고 있습니다.`;
+    }
+  }
+
+  if (elements.updateReleaseNotes && elements.updateNotesContent) {
+    if (releaseData && releaseData.body) {
+      elements.updateReleaseNotes.style.display = "block";
+      elements.updateNotesContent.textContent = releaseData.body;
+    } else {
+      elements.updateReleaseNotes.style.display = "none";
+    }
+  }
+
+  if (elements.btnDownloadUpdate) {
+    elements.btnDownloadUpdate.style.display = isNewAvailable ? "inline-block" : "none";
+  }
+
+  elements.modalUpdate.style.display = "flex";
+}
+
+function downloadLatestRelease() {
+  if (latestReleaseData && latestReleaseData.assets && latestReleaseData.assets.length > 0) {
+    const htmlAsset = latestReleaseData.assets.find(a => a.name.endsWith(".html")) || latestReleaseData.assets[0];
+    if (htmlAsset && htmlAsset.browser_download_url) {
+      window.open(htmlAsset.browser_download_url, "_blank");
+      showToast("최신 버전 다운로드를 시작했습니다!");
+      return;
+    }
+  }
+  window.open("https://github.com/solokjd-eng/Visual-Grid-Prompt-Web/releases/latest", "_blank");
+}
+
+// =============================================================================
 // Initialize Application
 // =============================================================================
 
 function initApp() {
+  initThemeUI();
+  initUpdateCheckerUI();
   initArtStylesUI();
   initPresetsUI();
   initCustomPresetsUI();

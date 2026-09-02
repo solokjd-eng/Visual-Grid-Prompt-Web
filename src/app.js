@@ -65,11 +65,28 @@ const elements = {
   toggleGridBorders: document.getElementById("toggle-grid-borders"),
   toggleMockup: document.getElementById("toggle-mockup"),
   
+  // Header Controls (Theme & Updates)
+  btnThemeToggle: document.getElementById("btn-theme-toggle"),
+  themeIcon: document.getElementById("theme-icon"),
+  themeLabel: document.getElementById("theme-label"),
+  btnCheckUpdate: document.getElementById("btn-check-update"),
+  updateBadgeText: document.getElementById("update-badge-text"),
+  updatePulseDot: document.getElementById("update-pulse-dot"),
+  modalUpdate: document.getElementById("modal-update"),
+  btnCloseUpdateModal: document.getElementById("btn-close-update-modal"),
+  btnCancelUpdate: document.getElementById("btn-cancel-update"),
+  btnDownloadUpdate: document.getElementById("btn-download-update"),
+  updateCurrentVer: document.getElementById("update-current-ver"),
+  updateLatestVer: document.getElementById("update-latest-ver"),
+  updateStatusBox: document.getElementById("update-status-box"),
+  updateReleaseNotes: document.getElementById("update-release-notes"),
+  updateNotesContent: document.getElementById("update-notes-content"),
+  chkAutoUpdate: document.getElementById("chk-auto-update"),
+
   // Area Editor & Presets (Windows Explorer Tree Selector)
   areaTabs: document.getElementById("area-tabs"),
   editorCard: document.getElementById("area-editor-card"),
   activeAreaTitle: document.getElementById("active-area-title"),
-  activeAreaSpatialBadge: document.getElementById("active-area-spatial"),
   presetTreeWrapper: document.getElementById("preset-tree-wrapper"),
   presetTreeBtn: document.getElementById("preset-tree-btn"),
   presetTreeSelectedText: document.getElementById("preset-tree-selected-text"),
@@ -131,10 +148,223 @@ const RATIO_MAP = {
 };
 
 // =============================================================================
+// Theme Management (Light Mode / Dark Mode)
+// =============================================================================
+
+function initThemeUI() {
+  const savedTheme = localStorage.getItem("visual_grid_theme") || "dark";
+  applyTheme(savedTheme);
+
+  if (elements.btnThemeToggle) {
+    elements.btnThemeToggle.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+      localStorage.setItem("visual_grid_theme", next);
+      showToast(`${next === "light" ? "☀️ 라이트 모드" : "🌙 다크 모드"}가 적용되었습니다.`);
+    });
+  }
+}
+
+function applyTheme(theme) {
+  if (document.documentElement && document.documentElement.setAttribute) {
+    document.documentElement.setAttribute("data-theme", theme);
+  } else if (document.body && document.body.setAttribute) {
+    document.body.setAttribute("data-theme", theme);
+  }
+  if (elements.themeIcon) {
+    elements.themeIcon.textContent = theme === "light" ? "☀️" : "🌙";
+  }
+  if (elements.themeLabel) {
+    elements.themeLabel.textContent = theme === "light" ? "라이트" : "다크";
+  }
+}
+
+// =============================================================================
+// Version & Update Checker System (GitHub Releases API)
+// =============================================================================
+
+const CURRENT_APP_VERSION = "v1.0.0";
+const GITHUB_REPO_API = "https://api.github.com/repos/solokjd-eng/Visual-Grid-Prompt-Web/releases/latest";
+let latestReleaseData = null;
+
+function initUpdateCheckerUI() {
+  if (elements.updateBadgeText) {
+    elements.updateBadgeText.textContent = CURRENT_APP_VERSION;
+  }
+
+  // Auto Check preference
+  const autoCheck = localStorage.getItem("vgs_auto_check_update") !== "false";
+  if (elements.chkAutoUpdate) {
+    elements.chkAutoUpdate.checked = autoCheck;
+    elements.chkAutoUpdate.addEventListener("change", (e) => {
+      localStorage.setItem("vgs_auto_check_update", e.target.checked ? "true" : "false");
+    });
+  }
+
+  // Button Click -> Manual Check
+  if (elements.btnCheckUpdate) {
+    elements.btnCheckUpdate.addEventListener("click", () => {
+      checkForUpdates(true);
+    });
+  }
+
+  // Modal Events
+  if (elements.btnCloseUpdateModal) {
+    elements.btnCloseUpdateModal.addEventListener("click", closeUpdateModal);
+  }
+  if (elements.btnCancelUpdate) {
+    elements.btnCancelUpdate.addEventListener("click", closeUpdateModal);
+  }
+  if (elements.modalUpdate) {
+    elements.modalUpdate.addEventListener("click", (e) => {
+      if (e.target === elements.modalUpdate) closeUpdateModal();
+    });
+  }
+
+  if (elements.btnDownloadUpdate) {
+    elements.btnDownloadUpdate.addEventListener("click", downloadLatestRelease);
+  }
+
+  // Auto-check on launch after 1.5 seconds if enabled
+  if (autoCheck) {
+    setTimeout(() => {
+      checkForUpdates(false);
+    }, 1500);
+  }
+}
+
+function closeUpdateModal() {
+  if (elements.modalUpdate) {
+    elements.modalUpdate.style.display = "none";
+  }
+}
+
+async function checkForUpdates(manual = false) {
+  if (typeof fetch === "undefined") return;
+  if (manual && elements.updateBadgeText) {
+    elements.updateBadgeText.textContent = "확인 중...";
+  }
+
+  try {
+    const res = await fetch(GITHUB_REPO_API, {
+      headers: { "Accept": "application/vnd.github.v3+json" }
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    latestReleaseData = data;
+    const latestVer = data.tag_name || data.name || CURRENT_APP_VERSION;
+
+    const hasNewVersion = isVersionNewer(latestVer, CURRENT_APP_VERSION);
+
+    if (hasNewVersion) {
+      // New version available!
+      if (elements.btnCheckUpdate) {
+        elements.btnCheckUpdate.classList.add("has-update");
+      }
+      if (elements.updateBadgeText) {
+        elements.updateBadgeText.textContent = `⚡ ${latestVer}`;
+      }
+      if (elements.updatePulseDot) {
+        elements.updatePulseDot.style.display = "inline-block";
+      }
+
+      openUpdateModal(latestVer, data, true);
+    } else {
+      // Already on latest version
+      if (elements.btnCheckUpdate) {
+        elements.btnCheckUpdate.classList.remove("has-update");
+      }
+      if (elements.updateBadgeText) {
+        elements.updateBadgeText.textContent = CURRENT_APP_VERSION;
+      }
+      if (elements.updatePulseDot) {
+        elements.updatePulseDot.style.display = "none";
+      }
+
+      if (manual) {
+        openUpdateModal(latestVer, data, false);
+      }
+    }
+  } catch (err) {
+    console.warn("Update check failed:", err);
+    if (elements.updateBadgeText) {
+      elements.updateBadgeText.textContent = CURRENT_APP_VERSION;
+    }
+    if (manual) {
+      showToast("업데이트 정보를 확인하지 못했습니다 (인터넷 연결 확인).");
+    }
+  }
+}
+
+function isVersionNewer(latest, current) {
+  const l = latest.replace(/^v/, "").split(".").map(Number);
+  const c = current.replace(/^v/, "").split(".").map(Number);
+
+  for (let i = 0; i < Math.max(l.length, c.length); i++) {
+    const numL = l[i] || 0;
+    const numC = c[i] || 0;
+    if (numL > numC) return true;
+    if (numL < numC) return false;
+  }
+  return false;
+}
+
+function openUpdateModal(latestVer, releaseData, isNewAvailable) {
+  if (!elements.modalUpdate) return;
+
+  if (elements.updateCurrentVer) elements.updateCurrentVer.textContent = CURRENT_APP_VERSION;
+  if (elements.updateLatestVer) elements.updateLatestVer.textContent = latestVer;
+
+  if (elements.updateStatusBox) {
+    if (isNewAvailable) {
+      elements.updateStatusBox.className = "update-status-box has-update";
+      elements.updateStatusBox.innerHTML = `🎉 <strong>새로운 업데이트(${latestVer})</strong>가 준비되어 있습니다!`;
+    } else {
+      elements.updateStatusBox.className = "update-status-box latest";
+      elements.updateStatusBox.innerHTML = `✅ 현재 <strong>최신 버전(${CURRENT_APP_VERSION})</strong>을 사용하고 있습니다.`;
+    }
+  }
+
+  if (elements.updateReleaseNotes && elements.updateNotesContent) {
+    if (releaseData && releaseData.body) {
+      elements.updateReleaseNotes.style.display = "block";
+      elements.updateNotesContent.textContent = releaseData.body;
+    } else {
+      elements.updateReleaseNotes.style.display = "none";
+    }
+  }
+
+  if (elements.btnDownloadUpdate) {
+    elements.btnDownloadUpdate.style.display = isNewAvailable ? "inline-block" : "none";
+  }
+
+  elements.modalUpdate.style.display = "flex";
+}
+
+function downloadLatestRelease() {
+  if (latestReleaseData && latestReleaseData.assets && latestReleaseData.assets.length > 0) {
+    const htmlAsset = latestReleaseData.assets.find(a => a.name.endsWith(".html")) || latestReleaseData.assets[0];
+    if (htmlAsset && htmlAsset.browser_download_url) {
+      window.open(htmlAsset.browser_download_url, "_blank");
+      showToast("최신 버전 다운로드를 시작했습니다!");
+      return;
+    }
+  }
+  window.open("https://github.com/solokjd-eng/Visual-Grid-Prompt-Web/releases/latest", "_blank");
+}
+
+// =============================================================================
 // Initialize Application
 // =============================================================================
 
 export function initApp() {
+  initThemeUI();
+  initUpdateCheckerUI();
   initArtStylesUI();
   initPresetsUI();
   initCustomPresetsUI();

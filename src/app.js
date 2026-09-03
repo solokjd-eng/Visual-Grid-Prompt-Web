@@ -424,6 +424,12 @@ export function initApp() {
     }
   }
 
+  // One-time cleanup for old legacy demo cyberpunk string
+  if (state.characterProfileEn && (state.characterProfileEn.includes("cyberpunk neon city with silver hair short bob hair") || state.characterProfileEn.includes("tactical bodysuit"))) {
+    state.characterProfileKo = "";
+    state.characterProfileEn = "";
+  }
+
   // Setup ResizeObserver for fluid auto-scaling of canvas
   if (window.ResizeObserver && elements.canvasViewport) {
     const ro = new ResizeObserver(() => {
@@ -2049,6 +2055,9 @@ function appendChipToActiveArea(chip) {
 }
 
 function updatePromptOutput() {
+  const liveCharProfile = elements.profileEnInput ? elements.profileEnInput.value.trim() : (state.characterProfileEn || "").trim();
+  state.characterProfileEn = liveCharProfile;
+
   const finalPos = buildFinalPrompt({
     areas: state.areas,
     cols: state.cols,
@@ -2060,7 +2069,7 @@ function updatePromptOutput() {
     characterSheetStyle: state.characterSheetStyle,
     prefixPrompt: state.prefixPrompt,
     suffixPrompt: state.suffixPrompt,
-    characterProfile: state.characterProfileEn
+    characterProfile: liveCharProfile
   });
 
   const finalNeg = buildNegativePrompt({

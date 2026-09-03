@@ -2205,18 +2205,30 @@ body {
   margin-bottom: 0 !important;
 }
 
+.output-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
 .output-resizable-main {
-  min-height: 170px;
-  height: 190px;
-  resize: vertical;
+  width: 100% !important;
+  min-height: 140px !important;
+  height: 180px;
+  resize: vertical !important;
+  display: block !important;
   background: rgba(5, 8, 16, 0.95);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   color: #00f0ff;
+  font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.55;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -2226,17 +2238,20 @@ body {
 }
 
 .output-resizable-sub {
-  min-height: 60px;
-  height: 65px;
-  resize: vertical;
+  width: 100% !important;
+  min-height: 60px !important;
+  height: 70px;
+  resize: vertical !important;
+  display: block !important;
   background: rgba(5, 8, 16, 0.95);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 8px 12px;
   color: #ff99aa;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 /* Light Mode Overrides */

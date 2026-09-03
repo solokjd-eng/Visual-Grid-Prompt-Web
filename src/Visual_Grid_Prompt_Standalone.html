@@ -2213,18 +2213,30 @@ body {
   margin-bottom: 0 !important;
 }
 
+.output-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
 .output-resizable-main {
-  min-height: 170px;
-  height: 190px;
-  resize: vertical;
+  width: 100% !important;
+  min-height: 140px !important;
+  height: 180px;
+  resize: vertical !important;
+  display: block !important;
   background: rgba(5, 8, 16, 0.95);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   color: #00f0ff;
+  font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1.55;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -2234,17 +2246,20 @@ body {
 }
 
 .output-resizable-sub {
-  min-height: 60px;
-  height: 65px;
-  resize: vertical;
+  width: 100% !important;
+  min-height: 60px !important;
+  height: 70px;
+  resize: vertical !important;
+  display: block !important;
   background: rgba(5, 8, 16, 0.95);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   padding: 8px 12px;
   color: #ff99aa;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 /* Light Mode Overrides */
@@ -2652,42 +2667,35 @@ body {
       </div>
 
       <!-- Live Generated AI Prompt Output -->
-      <div class="card flex-auto" id="card-output">
+      <div class="card" id="card-output">
         <div class="output-header-row">
-          <span class="card-title">🚀 최종 생성 프롬프트</span>
-          
-          <select class="format-select" id="format-select">
-            <option value="natural" selected>자연어 공간 표현 (Krea/Flux/Midjourney/GPT-4o)</option>
-            <option value="comfyui_break">ComfyUI / SD Regional (BREAK 문법)</option>
-            <option value="structured">구조화 태그 ([Area 1 - Left] ...)</option>
-            <option value="coordinates">바운딩 박스 (&lt;area bbox="[...]"&gt;)</option>
-            <option value="comma">단순 쉼표 나열 (Comma-Separated)</option>
-            <option value="json">원시 데이터 (Raw JSON Preset)</option>
-          </select>
-        </div>
-
-        <!-- Positive Output Box -->
-        <div class="output-box">
-          <textarea class="output-textarea" id="output-prompt" readonly placeholder="영역을 지정하면 여기에 최종 프롬프트가 실시간으로 조합됩니다..."></textarea>
-          <div class="output-actions">
-            <button class="btn-primary" id="btn-copy-prompt">
-              📋 프롬프트 복사
-            </button>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span class="card-title">🚀 최종 생성 프롬프트</span>
+            <select class="format-select" id="format-select">
+              <option value="natural" selected>자연어 공간 표현 (Krea/Flux/Midjourney/GPT-4o)</option>
+              <option value="comfyui_break">ComfyUI / SD Regional (BREAK 문법)</option>
+              <option value="structured">구조화 태그 ([Area 1 - Left] ...)</option>
+              <option value="coordinates">바운딩 박스 (&lt;area bbox="[...]"&gt;)</option>
+              <option value="comma">단순 쉼표 나열 (Comma-Separated)</option>
+              <option value="json">원시 데이터 (Raw JSON Preset)</option>
+            </select>
           </div>
+          <button class="btn-primary btn-sm" id="btn-copy-prompt" type="button">
+            📋 프롬프트 복사
+          </button>
         </div>
 
-        <!-- Negative Output Box -->
-        <div class="card-title-row" style="margin-top: 14px; margin-bottom: 8px;">
+        <!-- Positive Output Textarea (Corner resize handle is 100% visible at all zoom levels) -->
+        <textarea class="form-textarea code-font output-resizable-main" id="output-prompt" readonly placeholder="영역을 지정하면 여기에 최종 프롬프트가 실시간으로 조합됩니다..."></textarea>
+
+        <!-- Negative Output Section -->
+        <div class="output-header-row" style="margin-top: 14px; margin-bottom: 6px;">
           <span class="card-title" style="font-size: 12px;">🚫 추천 네거티브 프롬프트 (글자/숫자 아티팩트 방지)</span>
+          <button class="btn-secondary btn-xs" id="btn-copy-negative" type="button">
+            📋 네거티브 복사
+          </button>
         </div>
-        <div class="output-box" style="margin-bottom:0;">
-          <textarea class="output-textarea" id="output-negative" style="min-height:55px;" readonly></textarea>
-          <div class="output-actions">
-            <button class="btn-secondary" id="btn-copy-negative">
-              📋 네거티브 복사
-            </button>
-          </div>
-        </div>
+        <textarea class="form-textarea code-font output-resizable-sub" id="output-negative" readonly></textarea>
 
       </div>
 

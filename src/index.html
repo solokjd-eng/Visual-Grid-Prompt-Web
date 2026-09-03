@@ -65,6 +65,7 @@
       </div>
 
       <!-- Character Profile Card (인물/피사체 공통 묘사 & 히스토리) -->
+      <!-- Character Profile Card (인물/피사체 공통 묘사 & 즐겨찾기 관리) -->
       <div class="card character-profile-card">
         <div class="card-title-row profile-title-row">
           <div class="profile-title-left">
@@ -72,11 +73,21 @@
             <span class="form-label-tag">공란 시 자동 생략 | 입력 시 모든 패널에 외형·의상 일관 유지</span>
           </div>
           <div class="profile-title-actions">
-            <button id="btn-save-profile" class="btn btn-secondary btn-xs" title="현재 인물 묘사를 즐겨찾기에 저장">⭐ 저장</button>
+            <button id="btn-save-profile" class="btn btn-secondary btn-xs" title="현재 인물 묘사를 즐겨찾기에 저장">⭐ 즐겨찾기 저장</button>
             <button id="btn-clear-profile" class="btn btn-secondary btn-xs" title="입력 내용 초기화">🗑️ 비우기</button>
           </div>
         </div>
 
+        <!-- 1. 인물 즐겨찾기 전용 셀렉트 -->
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label class="form-label" for="character-favorite-select" style="margin-bottom: 4px;">
+            <span>⭐ 인물 즐겨찾기 (Favorites)</span>
+            <span class="form-label-tag" id="char-fav-select-tag">선택 시 인물 프로필 즉시 적용</span>
+          </label>
+          <select class="form-select custom-select-glow" id="character-favorite-select"></select>
+        </div>
+
+        <!-- 2. 한글 / 영문 인물 묘사 입력창 -->
         <div class="profile-input-wrapper">
           <div class="form-group" style="margin-bottom: 6px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
@@ -96,11 +107,21 @@
           </div>
         </div>
 
-        <!-- History & Saved Presets Chips -->
-        <div class="profile-history-row" id="profile-history-row">
-          <span class="history-label">⚡ 빠른 선택 / 기록:</span>
-          <div class="history-chips-container" id="profile-history-chips">
-            <!-- Dynamic History Chips injected via JS -->
+        <!-- 3. 인물 즐겨찾기 관리 토글 & 확장 서랍 (Drawer) -->
+        <div class="custom-manage-wrapper" style="margin-top: 6px;">
+          <button type="button" class="btn-manage-toggle" id="btn-toggle-char-manage">
+            <span class="manage-toggle-icon">⚙️</span>
+            <span class="manage-toggle-text">인물 즐겨찾기 관리 (생성 / 수정 / 삭제 / 순서 정하기)</span>
+            <span class="manage-toggle-arrow" id="char-manage-drawer-arrow">▼</span>
+          </button>
+          <div class="custom-manage-drawer collapsed" id="char-manage-drawer">
+            <div class="custom-manage-header-actions">
+              <button type="button" id="btn-save-as-char-fav" class="btn btn-secondary btn-xs" title="현재 입력창의 내용을 새 인물 즐겨찾기로 등록">💾 현재 입력 등록</button>
+              <button type="button" id="btn-add-char-fav" class="btn btn-primary btn-xs" title="새 인물 즐겨찾기 직접 추가">➕ 새 인물 등록</button>
+            </div>
+            <div class="custom-chips-container" id="char-chips-container">
+              <!-- Draggable Character Chips injected via JS -->
+            </div>
           </div>
         </div>
       </div>
@@ -400,6 +421,35 @@
       <div class="modal-footer">
         <button type="button" id="btn-cancel-preset" class="btn btn-secondary btn-sm">취소</button>
         <button type="button" id="btn-save-preset-confirm" class="btn btn-primary btn-sm">✨ 저장 및 등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Favorite Modal (인물 즐겨찾기 추가 / 수정 모달) -->
+  <div id="modal-char-fav" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-char-title" class="modal-title">👤 인물 즐겨찾기 등록 / 수정</h3>
+        <button type="button" id="btn-close-char-modal" class="modal-close-btn" title="닫기">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="char-edit-id" value="">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="char-input-label">인물 이름 / 별칭 (Label):</label>
+          <input type="text" id="char-input-label" class="form-input" placeholder="예: 40대 대머리 남성, 20대 안경 포니테일, 은발 여전사">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="char-input-ko">한글 인물 묘사 (Korean Prompt):</label>
+          <textarea id="char-input-ko" class="form-textarea" rows="2" placeholder="예: 한국인, 40살, 남자, 대머리, 하얀 나시티, 무지개 반바지."></textarea>
+        </div>
+        <div class="form-group" style="margin-bottom: 6px;">
+          <label class="form-label" for="char-input-en">영문 인물 묘사 (English Prompt - 공란 시 자동 번역):</label>
+          <textarea id="char-input-en" class="form-textarea code-font" rows="2" placeholder="예: korean, 40 years old, 1man, bald head, white tank top, rainbow shorts"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-char" class="btn btn-secondary btn-sm">취소</button>
+        <button type="button" id="btn-save-char-confirm" class="btn btn-primary btn-sm">✨ 저장 및 등록</button>
       </div>
     </div>
   </div>

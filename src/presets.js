@@ -2,7 +2,7 @@
  * 원본 ComfyUI 노드 100% 동일 샷/구도 프리셋 및 레이아웃 템플릿, 화풍 스타일 프리셋
  */
 
-// 🎨 화풍 & 아트 스타일 프리셋 (실사, 반실사, 2D애니, 설정화, 3D)
+// 🎨 화풍 & 아트 스타일 프리셋 (실사, 반실사, 2D애니, 설정화, 3D, 화풍 없음)
 export const ART_STYLES = [
   {
     id: "photorealistic",
@@ -48,6 +48,37 @@ export const ART_STYLES = [
     suffix: "clean studio void backdrop, physically based rendering (PBR) materials, ambient occlusion, 8k textures, volumetric lighting",
     whiteBg: false,
     gridBorders: true
+  },
+  {
+    id: "none",
+    name: "🚫 화풍 없음 (None / Pure)",
+    icon: "🚫",
+    prefix: "",
+    suffix: "",
+    whiteBg: false,
+    gridBorders: true
+  }
+];
+
+// 기본 추천 공통 인물 / 피사체 즐겨찾기 목록
+export const DEFAULT_CHARACTER_FAVORITES = [
+  {
+    id: "char_default_1",
+    label: "20대 한국 여성 (안경/포니테일)",
+    ko: "20대 한국 여성, 검은 뿔테 안경, 긴 흑발 포니테일, 핑크 요가복",
+    en: "20 years old korean woman, black rim glasses, long black ponytail, pink yoga outfit"
+  },
+  {
+    id: "char_default_2",
+    label: "은발 단발 사이버펑크 여전사",
+    ko: "은발 단발의 사이버펑크 여전사, 네온 바이저, 메카닉 가죽 자켓",
+    en: "cyberpunk female warrior with short silver hair, neon visor, tactical leather jacket"
+  },
+  {
+    id: "char_default_3",
+    label: "40대 한국 남성 (캐주얼)",
+    ko: "한국인, 40살 남자, 깔끔한 헤어스타일, 흰색 면티, 청바지",
+    en: "korean, 40 years old man, clean hairstyle, white cotton t-shirt, blue denim jeans"
   }
 ];
 

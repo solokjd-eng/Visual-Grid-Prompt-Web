@@ -1,6 +1,6 @@
 import { translatePrompt, translateViaDictionary } from './translator.js';
 import { getNaturalSpatialName, getSpatialDescription, buildFinalPrompt, buildNegativePrompt } from './spatial.js';
-import { PRESET_GROUPS, LAYOUT_TEMPLATES, COLOR_PALETTE, ART_STYLES } from './presets.js';
+import { PRESET_GROUPS, LAYOUT_TEMPLATES, COLOR_PALETTE, ART_STYLES, DEFAULT_CHARACTER_FAVORITES } from './presets.js';
 
 /**
  * Application State
@@ -17,7 +17,7 @@ const state = {
   customPresets: [],
   characterProfileKo: "",
   characterProfileEn: "",
-  characterHistory: [],
+  characterFavorites: [],
   prefixPrompt: "RAW candid photo, authentic portrait photography, shot on 50mm f/1.8 lens, natural human skin texture with subtle pores, soft daylight studio lighting, unretouched real person photography",
   suffixPrompt: "clean neutral background, true-to-life skin tones, natural shadows, sharp focus, 35mm film grain, high dynamic range",
   format: "natural",
@@ -51,13 +51,28 @@ const elements = {
   // Templates
   templatesContainer: document.getElementById("templates-container"),
 
-  // Character Profile
+  // Character Profile & Favorites
   inputCharacterKo: document.getElementById("input-character-ko"),
   btnApplyProfile: document.getElementById("btn-apply-profile"),
   btnSaveProfile: document.getElementById("btn-save-profile"),
   btnClearProfile: document.getElementById("btn-clear-profile"),
   profileEnInput: document.getElementById("profile-en-input"),
-  profileHistoryChips: document.getElementById("profile-history-chips"),
+  charFavSelect: document.getElementById("character-favorite-select"),
+  btnToggleCharManage: document.getElementById("btn-toggle-char-manage"),
+  charManageDrawer: document.getElementById("char-manage-drawer"),
+  charManageDrawerArrow: document.getElementById("char-manage-drawer-arrow"),
+  btnSaveAsCharFav: document.getElementById("btn-save-as-char-fav"),
+  btnAddCharFav: document.getElementById("btn-add-char-fav"),
+  charChipsContainer: document.getElementById("char-chips-container"),
+  modalCharFav: document.getElementById("modal-char-fav"),
+  modalCharTitle: document.getElementById("modal-char-title"),
+  btnCloseCharModal: document.getElementById("btn-close-char-modal"),
+  btnCancelChar: document.getElementById("btn-cancel-char"),
+  btnSaveCharConfirm: document.getElementById("btn-save-char-confirm"),
+  charEditId: document.getElementById("char-edit-id"),
+  charInputLabel: document.getElementById("char-input-label"),
+  charInputKo: document.getElementById("char-input-ko"),
+  charInputEn: document.getElementById("char-input-en"),
   
   // Art Styles & Toggles
   artStylesContainer: document.getElementById("art-styles-container"),
@@ -468,30 +483,10 @@ function applyArtStyle(style) {
   showToast(`🎨 화풍이 '${style.name}'(으)로 변경되었습니다!`);
 }
 
-/**
- * Default Character Profile Presets for Quick Start
- */
-const DEFAULT_CHARACTER_PRESETS = [
-  "20대 한국 여성, 검은 뿔테 안경, 긴 흑발 포니테일, 핑크 요가복",
-  "은발 단발의 사이버펑크 여전사, 네온 블루 바이저, 전술 바디슈트",
-  "금발 웨이브 헤어의 판타지 마법사, 푸른 로브, 신비로운 분위기",
-  "단정한 갈색 숏컷의 여대생, 화이트 셔츠, 베이지 가디건"
-];
+let draggedCharIndex = null;
 
 function initCharacterProfileUI() {
-  // Load history from localStorage
-  const savedHistory = localStorage.getItem("vgs_character_history");
-  if (savedHistory) {
-    try {
-      state.characterHistory = JSON.parse(savedHistory);
-    } catch (e) {
-      state.characterHistory = [...DEFAULT_CHARACTER_PRESETS];
-    }
-  } else {
-    state.characterHistory = [...DEFAULT_CHARACTER_PRESETS];
-  }
-
-  // Restore current value if exists in state
+  // Load saved state or default
   if (state.characterProfileKo && elements.inputCharacterKo) {
     elements.inputCharacterKo.value = state.characterProfileKo;
   }
@@ -499,11 +494,106 @@ function initCharacterProfileUI() {
     elements.profileEnInput.value = state.characterProfileEn;
   }
 
-  renderCharacterHistoryChips();
+  // Load Character Favorites
+  const savedFavorites = localStorage.getItem("vgs_character_favorites");
+  if (savedFavorites) {
+    try {
+      state.characterFavorites = JSON.parse(savedFavorites);
+    } catch (e) {
+      state.characterFavorites = [...DEFAULT_CHARACTER_FAVORITES];
+    }
+  } else {
+    // Check for legacy characterHistory migration
+    const oldHistory = localStorage.getItem("vgs_character_history");
+    if (oldHistory) {
+      try {
+        const parsed = JSON.parse(oldHistory);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          state.characterFavorites = parsed.map((item, idx) => ({
+            id: `char_migrated_${idx}_${Date.now()}`,
+            label: item.length > 18 ? item.slice(0, 18) + "..." : item,
+            ko: item,
+            en: ""
+          }));
+        } else {
+          state.characterFavorites = [...DEFAULT_CHARACTER_FAVORITES];
+        }
+      } catch (e) {
+        state.characterFavorites = [...DEFAULT_CHARACTER_FAVORITES];
+      }
+    } else {
+      state.characterFavorites = [...DEFAULT_CHARACTER_FAVORITES];
+    }
+    saveCharacterFavoritesToStorage();
+  }
+
+  renderCharacterFavorites();
+
+  // Favorite Select change event
+  if (elements.charFavSelect) {
+    elements.charFavSelect.addEventListener("change", (e) => {
+      const selectedId = e.target.value;
+      if (!selectedId) return;
+      const fav = state.characterFavorites.find(f => f.id === selectedId);
+      if (fav) {
+        if (elements.inputCharacterKo) elements.inputCharacterKo.value = fav.ko || "";
+        if (elements.profileEnInput) elements.profileEnInput.value = fav.en || "";
+        applyCharacterProfile(fav.ko, fav.en);
+        showToast(`⭐ 인물 즐겨찾기 '${fav.label}'(이)가 적용되었습니다.`);
+      }
+      setTimeout(() => {
+        if (elements.charFavSelect) elements.charFavSelect.value = "";
+      }, 100);
+    });
+  }
+
+  // Drawer Toggle
+  if (elements.btnToggleCharManage && elements.charManageDrawer) {
+    elements.btnToggleCharManage.addEventListener("click", () => {
+      const isCollapsed = elements.charManageDrawer.classList.contains("collapsed");
+      elements.charManageDrawer.classList.toggle("collapsed", !isCollapsed);
+      if (elements.charManageDrawerArrow) {
+        elements.charManageDrawerArrow.textContent = isCollapsed ? "▲" : "▼";
+      }
+    });
+  }
+
+  // Action Buttons
+  if (elements.btnSaveProfile) {
+    elements.btnSaveProfile.addEventListener("click", () => {
+      saveCurrentInputAsCharFav();
+    });
+  }
+  if (elements.btnSaveAsCharFav) {
+    elements.btnSaveAsCharFav.addEventListener("click", () => {
+      saveCurrentInputAsCharFav();
+    });
+  }
+  if (elements.btnAddCharFav) {
+    elements.btnAddCharFav.addEventListener("click", () => {
+      openCharModal(null);
+    });
+  }
+
+  // Modal Events
+  if (elements.btnCloseCharModal) {
+    elements.btnCloseCharModal.addEventListener("click", closeCharModal);
+  }
+  if (elements.btnCancelChar) {
+    elements.btnCancelChar.addEventListener("click", closeCharModal);
+  }
+  if (elements.btnSaveCharConfirm) {
+    elements.btnSaveCharConfirm.addEventListener("click", saveCharFromModal);
+  }
+  if (elements.modalCharFav) {
+    elements.modalCharFav.addEventListener("click", (e) => {
+      if (e.target === elements.modalCharFav) closeCharModal();
+    });
+  }
 
   if (elements.btnApplyProfile) {
     elements.btnApplyProfile.addEventListener("click", () => {
-      applyCharacterProfile(elements.inputCharacterKo?.value);
+      applyCharacterProfile(elements.inputCharacterKo?.value, elements.profileEnInput?.value);
     });
   }
 
@@ -511,7 +601,7 @@ function initCharacterProfileUI() {
     elements.inputCharacterKo.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
-        applyCharacterProfile(elements.inputCharacterKo?.value);
+        applyCharacterProfile(elements.inputCharacterKo?.value, elements.profileEnInput?.value);
       }
     });
   }
@@ -535,35 +625,240 @@ function initCharacterProfileUI() {
       showToast("인물 묘사가 비워졌습니다 (공란 처리).");
     });
   }
+}
 
-  if (elements.btnSaveProfile) {
-    elements.btnSaveProfile.addEventListener("click", () => {
-      const text = elements.inputCharacterKo?.value.trim();
-      if (!text) {
-        showToast("저장할 인물 묘사를 먼저 입력하세요!");
-        return;
-      }
-      applyCharacterProfile(text, true);
-      showToast("⭐ 인물 묘사가 기록/즐겨찾기에 저장되었습니다!");
+function renderCharacterFavorites() {
+  renderCharacterFavoriteSelect();
+  renderCharacterChips();
+}
+
+function renderCharacterFavoriteSelect() {
+  if (!elements.charFavSelect) return;
+  elements.charFavSelect.innerHTML = "";
+
+  const defaultOpt = document.createElement("option");
+  defaultOpt.value = "";
+  defaultOpt.textContent = `▼ ⭐ 인물 즐겨찾기 선택 (${state.characterFavorites.length}개 등록됨)`;
+  elements.charFavSelect.appendChild(defaultOpt);
+
+  state.characterFavorites.forEach((item, idx) => {
+    const opt = document.createElement("option");
+    opt.value = item.id;
+    opt.textContent = `${idx + 1}. ${item.label}`;
+    elements.charFavSelect.appendChild(opt);
+  });
+}
+
+function renderCharacterChips() {
+  if (!elements.charChipsContainer) return;
+  elements.charChipsContainer.innerHTML = "";
+
+  if (state.characterFavorites.length === 0) {
+    elements.charChipsContainer.innerHTML = `<span style="font-size:11px;color:var(--text-muted);padding:6px 0;">등록된 인물 즐겨찾기가 없습니다. [💾 현재 입력 등록] 또는 [➕ 새 인물 등록]을 눌러보세요.</span>`;
+    return;
+  }
+
+  state.characterFavorites.forEach((item, index) => {
+    const chip = document.createElement("div");
+    chip.className = "custom-chip";
+    chip.draggable = true;
+    chip.dataset.index = index;
+    chip.title = "클릭: 이 인물 프로필 적용 | 드래그: 순서 이동";
+
+    chip.addEventListener("click", () => {
+      if (elements.inputCharacterKo) elements.inputCharacterKo.value = item.ko || "";
+      if (elements.profileEnInput) elements.profileEnInput.value = item.en || "";
+      applyCharacterProfile(item.ko, item.en);
+      showToast(`⭐ '${item.label}' 인물 묘사가 적용되었습니다.`);
     });
+
+    const handle = document.createElement("span");
+    handle.className = "custom-chip-handle";
+    handle.innerHTML = "⠿";
+    handle.title = "마우스로 끌어서 순서 변경";
+
+    const label = document.createElement("span");
+    label.className = "custom-chip-label";
+    label.textContent = item.label;
+
+    const actions = document.createElement("span");
+    actions.className = "custom-chip-actions";
+
+    const btnEdit = document.createElement("button");
+    btnEdit.className = "custom-chip-btn edit";
+    btnEdit.type = "button";
+    btnEdit.innerHTML = "✏️";
+    btnEdit.title = "이 인물 즐겨찾기 수정";
+    btnEdit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openCharModal(item);
+    });
+
+    const btnDel = document.createElement("button");
+    btnDel.className = "custom-chip-btn delete";
+    btnDel.type = "button";
+    btnDel.innerHTML = "×";
+    btnDel.title = "이 인물 즐겨찾기 삭제";
+    btnDel.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteCharacterFavorite(item.id);
+    });
+
+    actions.appendChild(btnEdit);
+    actions.appendChild(btnDel);
+
+    chip.appendChild(handle);
+    chip.appendChild(label);
+    chip.appendChild(actions);
+
+    // HTML5 Drag & Drop
+    chip.addEventListener("dragstart", (e) => {
+      draggedCharIndex = index;
+      chip.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", index);
+    });
+
+    chip.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      chip.classList.add("drag-over");
+    });
+
+    chip.addEventListener("dragleave", () => {
+      chip.classList.remove("drag-over");
+    });
+
+    chip.addEventListener("drop", (e) => {
+      e.preventDefault();
+      chip.classList.remove("drag-over");
+      const targetIndex = index;
+      if (draggedCharIndex !== null && draggedCharIndex !== targetIndex) {
+        const [movedItem] = state.characterFavorites.splice(draggedCharIndex, 1);
+        state.characterFavorites.splice(targetIndex, 0, movedItem);
+        saveCharacterFavoritesToStorage();
+        renderCharacterFavorites();
+        showToast("인물 즐겨찾기 순서가 변경되었습니다.");
+      }
+    });
+
+    chip.addEventListener("dragend", () => {
+      chip.classList.remove("dragging");
+      draggedCharIndex = null;
+      document.querySelectorAll("#char-chips-container .custom-chip").forEach(c => c.classList.remove("drag-over"));
+    });
+
+    elements.charChipsContainer.appendChild(chip);
+  });
+}
+
+function openCharModal(charItem = null) {
+  if (!elements.modalCharFav) return;
+
+  if (charItem) {
+    if (elements.modalCharTitle) elements.modalCharTitle.textContent = "✏️ 인물 즐겨찾기 수정";
+    if (elements.charEditId) elements.charEditId.value = charItem.id;
+    if (elements.charInputLabel) elements.charInputLabel.value = charItem.label || "";
+    if (elements.charInputKo) elements.charInputKo.value = charItem.ko || "";
+    if (elements.charInputEn) elements.charInputEn.value = charItem.en || "";
+  } else {
+    if (elements.modalCharTitle) elements.modalCharTitle.textContent = "➕ 새 인물 즐겨찾기 추가";
+    if (elements.charEditId) elements.charEditId.value = "";
+    if (elements.charInputLabel) elements.charInputLabel.value = "";
+    if (elements.charInputKo) elements.charInputKo.value = "";
+    if (elements.charInputEn) elements.charInputEn.value = "";
+  }
+
+  elements.modalCharFav.style.display = "flex";
+  if (elements.charInputLabel) elements.charInputLabel.focus();
+}
+
+function closeCharModal() {
+  if (elements.modalCharFav) {
+    elements.modalCharFav.style.display = "none";
   }
 }
 
-async function applyCharacterProfile(textKo, saveToHistory = true) {
-  const clean = (textKo || "").trim();
-  state.characterProfileKo = clean;
+async function saveCharFromModal() {
+  const label = (elements.charInputLabel?.value || "").trim();
+  const ko = (elements.charInputKo?.value || "").trim();
+  let en = (elements.charInputEn?.value || "").trim();
 
-  if (clean) {
-    const en = await translatePrompt(clean);
-    state.characterProfileEn = en;
-    if (elements.profileEnInput) elements.profileEnInput.value = en;
+  if (!ko && !label) {
+    showToast("인물 이름 또는 한글 묘사를 입력하세요!");
+    return;
+  }
 
-    if (saveToHistory) {
-      state.characterHistory = [clean, ...state.characterHistory.filter(h => h !== clean)].slice(0, 10);
-      localStorage.setItem("vgs_character_history", JSON.stringify(state.characterHistory));
-      renderCharacterHistoryChips();
+  const finalLabel = label || ko.slice(0, 15);
+  const finalKo = ko || label;
+
+  if (!en && finalKo) {
+    en = translateViaDictionary(finalKo) || (await translatePrompt(finalKo));
+  }
+
+  const editId = elements.charEditId?.value;
+
+  if (editId) {
+    const target = state.characterFavorites.find(c => c.id === editId);
+    if (target) {
+      target.label = finalLabel;
+      target.ko = finalKo;
+      target.en = en;
+      showToast(`'${finalLabel}' 인물 즐겨찾기가 수정되었습니다.`);
     }
-    showToast("👤 인물 프로필이 적용되었습니다!");
+  } else {
+    const newChar = {
+      id: "char_" + Date.now(),
+      label: finalLabel,
+      ko: finalKo,
+      en: en
+    };
+    state.characterFavorites.push(newChar);
+    showToast(`'${finalLabel}' 인물 즐겨찾기가 등록되었습니다!`);
+  }
+
+  saveCharacterFavoritesToStorage();
+  renderCharacterFavorites();
+  closeCharModal();
+}
+
+function saveCurrentInputAsCharFav() {
+  const currentKo = elements.inputCharacterKo?.value?.trim() || "";
+  const currentEn = elements.profileEnInput?.value?.trim() || "";
+
+  if (!currentKo && !currentEn) {
+    showToast("먼저 인물 묘사 입력창에 내용을 작성하세요!");
+    return;
+  }
+
+  openCharModal(null);
+  if (elements.charInputLabel) elements.charInputLabel.value = currentKo.slice(0, 15);
+  if (elements.charInputKo) elements.charInputKo.value = currentKo;
+  if (elements.charInputEn) elements.charInputEn.value = currentEn;
+}
+
+function deleteCharacterFavorite(id) {
+  state.characterFavorites = state.characterFavorites.filter(c => c.id !== id);
+  saveCharacterFavoritesToStorage();
+  renderCharacterFavorites();
+  showToast("인물 즐겨찾기가 삭제되었습니다.");
+}
+
+function saveCharacterFavoritesToStorage() {
+  localStorage.setItem("vgs_character_favorites", JSON.stringify(state.characterFavorites));
+}
+
+async function applyCharacterProfile(textKo, textEn = null) {
+  const cleanKo = (textKo || "").trim();
+  state.characterProfileKo = cleanKo;
+
+  if (cleanKo) {
+    if (textEn && textEn.trim()) {
+      state.characterProfileEn = textEn.trim();
+    } else {
+      state.characterProfileEn = translateViaDictionary(cleanKo) || (await translatePrompt(cleanKo));
+    }
+    if (elements.profileEnInput) elements.profileEnInput.value = state.characterProfileEn;
   } else {
     state.characterProfileEn = "";
     if (elements.profileEnInput) elements.profileEnInput.value = "";
@@ -571,41 +866,6 @@ async function applyCharacterProfile(textKo, saveToHistory = true) {
 
   updatePromptOutput();
   saveState();
-}
-
-function renderCharacterHistoryChips() {
-  if (!elements.profileHistoryChips) return;
-  elements.profileHistoryChips.innerHTML = "";
-
-  (state.characterHistory || []).forEach(item => {
-    const chip = document.createElement("div");
-    chip.className = "history-chip";
-    chip.title = "클릭하여 이 인물 묘사 적용";
-    
-    const label = document.createElement("span");
-    label.textContent = item.length > 20 ? item.slice(0, 20) + "..." : item;
-    
-    const del = document.createElement("span");
-    del.className = "history-chip-del";
-    del.innerHTML = "×";
-    del.title = "이 기록 삭제";
-    del.addEventListener("click", (e) => {
-      e.stopPropagation();
-      state.characterHistory = state.characterHistory.filter(h => h !== item);
-      localStorage.setItem("vgs_character_history", JSON.stringify(state.characterHistory));
-      renderCharacterHistoryChips();
-    });
-
-    chip.appendChild(label);
-    chip.appendChild(del);
-
-    chip.addEventListener("click", () => {
-      if (elements.inputCharacterKo) elements.inputCharacterKo.value = item;
-      applyCharacterProfile(item, false);
-    });
-
-    elements.profileHistoryChips.appendChild(chip);
-  });
 }
 
 /**

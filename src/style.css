@@ -2154,3 +2154,116 @@ body {
 [data-theme="light"] .update-release-notes h4 {
   color: #0f172a;
 }
+
+/* ==========================================================================
+   Card Collapse Controls & Resizable Output Boxes
+   ========================================================================== */
+
+.btn-card-collapse {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 700;
+  width: 26px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+  margin-left: 4px;
+}
+
+.btn-card-collapse:hover {
+  background: rgba(0, 240, 255, 0.2);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan-glow);
+  transform: translateY(-1px);
+}
+
+.card-collapsible-content {
+  transition: opacity 0.2s ease;
+}
+
+.card-collapsible-content.collapsed {
+  display: none !important;
+}
+
+.card.is-collapsed {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.card.is-collapsed .card-title-row {
+  margin-bottom: 0 !important;
+}
+
+.output-resizable-main {
+  min-height: 170px;
+  height: 190px;
+  resize: vertical;
+  background: rgba(5, 8, 16, 0.95);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: #00f0ff;
+  font-size: 12px;
+  line-height: 1.55;
+  box-sizing: border-box;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.output-resizable-main:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
+}
+
+.output-resizable-sub {
+  min-height: 60px;
+  height: 65px;
+  resize: vertical;
+  background: rgba(5, 8, 16, 0.95);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: #ff99aa;
+  font-size: 11px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] .btn-card-collapse {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+[data-theme="light"] .btn-card-collapse:hover {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0284c7;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="light"] .output-resizable-main {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0369a1;
+}
+
+[data-theme="light"] .output-resizable-main:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
+}
+
+[data-theme="light"] .output-resizable-sub {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #b91c1c;
+}
+

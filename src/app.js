@@ -73,6 +73,26 @@ const elements = {
   charInputLabel: document.getElementById("char-input-label"),
   charInputKo: document.getElementById("char-input-ko"),
   charInputEn: document.getElementById("char-input-en"),
+
+  // Card Collapsible Controls
+  cardTemplates: document.getElementById("card-templates"),
+  btnCollapseTemplates: document.getElementById("btn-collapse-templates"),
+  arrowTemplates: document.getElementById("arrow-templates"),
+  contentTemplates: document.getElementById("content-templates"),
+
+  cardCharProfile: document.getElementById("card-char-profile"),
+  btnCollapseChar: document.getElementById("btn-collapse-char"),
+  arrowChar: document.getElementById("arrow-char"),
+  contentChar: document.getElementById("content-char"),
+
+  cardArtStyles: document.getElementById("card-art-styles"),
+  btnCollapseArt: document.getElementById("btn-collapse-art"),
+  arrowArt: document.getElementById("arrow-art"),
+  contentArt: document.getElementById("content-art"),
+
+  btnToggleArtPrompts: document.getElementById("btn-toggle-art-prompts"),
+  artPromptsDrawer: document.getElementById("art-prompts-drawer"),
+  artPromptsDrawerArrow: document.getElementById("art-prompts-drawer-arrow"),
   
   // Art Styles & Toggles
   artStylesContainer: document.getElementById("art-styles-container"),
@@ -399,6 +419,7 @@ export function initApp() {
   initCustomPresetsUI();
   initLayoutTemplatesUI();
   initCharacterProfileUI();
+  initCollapsibleCards();
   bindEvents();
   
   // Load saved state or default template
@@ -427,6 +448,63 @@ export function initApp() {
   renderAreas();
   updateUIInputs();
   updatePromptOutput();
+}
+
+/**
+ * Collapsible Cards Management with localStorage Persistence
+ */
+function initCollapsibleCards() {
+  const setupCardCollapse = (btn, content, arrow, card, storageKey, defaultOpen = true) => {
+    if (!btn || !content) return;
+    
+    // Read saved state
+    const saved = localStorage.getItem(storageKey);
+    const isCollapsed = saved !== null ? saved === "true" : !defaultOpen;
+
+    const applyCollapseState = (collapse) => {
+      content.classList.toggle("collapsed", collapse);
+      if (card) card.classList.toggle("is-collapsed", collapse);
+      if (arrow) arrow.textContent = collapse ? "▲" : "▼";
+      localStorage.setItem(storageKey, collapse ? "true" : "false");
+    };
+
+    applyCollapseState(isCollapsed);
+
+    btn.addEventListener("click", () => {
+      const currentlyCollapsed = content.classList.contains("collapsed");
+      applyCollapseState(!currentlyCollapsed);
+    });
+  };
+
+  // 1. Templates Quick Bar Collapse
+  setupCardCollapse(elements.btnCollapseTemplates, elements.contentTemplates, elements.arrowTemplates, elements.cardTemplates, "vgs_collapse_templates", true);
+
+  // 2. Character Profile Collapse
+  setupCardCollapse(elements.btnCollapseChar, elements.contentChar, elements.arrowChar, elements.cardCharProfile, "vgs_collapse_char", true);
+
+  // 3. Art Styles Card Collapse
+  setupCardCollapse(elements.btnCollapseArt, elements.contentArt, elements.arrowArt, elements.cardArtStyles, "vgs_collapse_art", true);
+
+  // 4. Sub-drawer for Art Prompts (Prefix / Suffix directly editable)
+  if (elements.btnToggleArtPrompts && elements.artPromptsDrawer) {
+    const savedDrawer = localStorage.getItem("vgs_collapse_art_prompts");
+    const isDrawerCollapsed = savedDrawer !== null ? savedDrawer === "true" : true;
+
+    const setDrawerCollapsed = (collapse) => {
+      elements.artPromptsDrawer.classList.toggle("collapsed", collapse);
+      if (elements.artPromptsDrawerArrow) {
+        elements.artPromptsDrawerArrow.textContent = collapse ? "▼" : "▲";
+      }
+      localStorage.setItem("vgs_collapse_art_prompts", collapse ? "true" : "false");
+    };
+
+    setDrawerCollapsed(isDrawerCollapsed);
+
+    elements.btnToggleArtPrompts.addEventListener("click", () => {
+      const currentlyCollapsed = elements.artPromptsDrawer.classList.contains("collapsed");
+      setDrawerCollapsed(!currentlyCollapsed);
+    });
+  }
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * 한글 -> 영문 AI 프롬프트 사전 및 번역 모듈
+ * 한글 -> 영문 AI 프롬프트 번역 및 사전 모듈
  */
 
 export const PROMPT_TRANSLATIONS = [
@@ -31,7 +31,28 @@ export const PROMPT_TRANSLATIONS = [
   [/하반신\s*(후면|뒷모습)/gi, "lower body, legs, back view"],
   [/하반신/gi, "lower body, legs"],
 
-  // 2. 헤어 & 눈 & 캐릭터 외모
+  // 2. 연령 & 인물
+  [/(\d+)대\s*한국인?\s*(여성|여자|소녀)/gi, "korean woman in her $1s"],
+  [/(\d+)대\s*한국인?\s*(남성|남자|소년)/gi, "korean man in his $1s"],
+  [/(\d+)대\s*(여성|여자|소녀)/gi, "woman in her $1s"],
+  [/(\d+)대\s*(남성|남자|소년)/gi, "man in his $1s"],
+  [/(\d+)\s*대/gi, "in $1s"],
+  [/(\d+)\s*세/gi, "$1-year-old"],
+  [/한국인|한국\s*사람/gi, "korean"],
+  [/한국\s*(여성|여자|소녀)/gi, "korean woman"],
+  [/한국\s*(남성|남자|소년)/gi, "korean man"],
+  [/여고생|고등학교\s*여학생/gi, "high school girl, student"],
+  [/남고생|고등학교\s*남학생/gi, "high school boy, student"],
+  [/여대생|대학생\s*여성/gi, "college girl, university student"],
+  [/어여쁜\s*소녀|예쁜\s*소녀|소녀|미소녀/gi, "1girl, beautiful girl"],
+  [/여자|여성|미녀/gi, "1woman, beautiful woman"],
+  [/소년|미소년/gi, "1boy, handsome boy"],
+  [/남자|남성|미남/gi, "1man, handsome man"],
+  [/어린이|아이/gi, "child, cute kid"],
+
+  // 3. 헤어 & 눈 & 캐릭터 외모
+  [/긴\s*흑발\s*포니테일|흑발\s*포니테일/gi, "long black ponytail hair"],
+  [/긴\s*흑발|긴\s*검은\s*머리/gi, "long black hair"],
   [/은발/gi, "silver hair"],
   [/백발/gi, "white hair"],
   [/금발/gi, "blonde hair"],
@@ -56,17 +77,6 @@ export const PROMPT_TRANSLATIONS = [
   [/보라색\s*눈/gi, "purple eyes"],
   [/금안|노란\s*눈/gi, "golden eyes"],
   [/오드아이/gi, "heterochromia, odd eyes"],
-
-  [/(\d+)\s*세/gi, "$1-year-old"],
-  [/한국인|한국\s*(사람|여성|소녀|소년대)?/gi, "korean"],
-  [/여고생|고등학교\s*여학생/gi, "high school girl, student"],
-  [/남고생|고등학교\s*남학생/gi, "high school boy, student"],
-  [/여대생|대학생\s*여성/gi, "college girl, university student"],
-  [/어여쁜\s*소녀|예쁜\s*소녀|소녀|미소녀/gi, "1girl, beautiful girl"],
-  [/여자|여성|미녀/gi, "1woman, beautiful woman"],
-  [/소년|미소년/gi, "1boy, handsome boy"],
-  [/남자|남성|미남/gi, "1man, handsome man"],
-  [/어린이|아이/gi, "child, cute kid"],
   [/여우귀/gi, "fox ears, fennec ears"],
   [/고양이귀/gi, "cat ears"],
   [/토끼귀/gi, "rabbit ears"],
@@ -75,25 +85,21 @@ export const PROMPT_TRANSLATIONS = [
   [/악마\s*날개/gi, "demon wings, bat wings"],
   [/꼬리/gi, "fluffy tail"],
 
-  // 3. 앵글 & 시점 & 구도
-  [/45도(\s*측면|\s*각도|\s*뷰)?|반측면|쿼터뷰/gi, "three-quarter view, 45-degree angle"],
-  [/90도(\s*측면|\s*각도|\s*프로필)?/gi, "side profile view, 90-degree angle"],
-  [/정면(\s*샷|\s*뷰)?/gi, "front view"],
-  [/측면(\s*샷|\s*뷰)?/gi, "side profile view"],
-  [/뒷모습|후면(\s*샷|\s*뷰)?/gi, "back view, from behind"],
-  [/뒤돌아보는/gi, "looking back over shoulder"],
-  [/오버더\s*숄더/gi, "over-the-shoulder shot"],
-  [/바스트샷|가슴위/gi, "bust shot"],
-  [/웨이스트샷|허리위/gi, "waist shot"],
-  [/카우보이샷|무릎위/gi, "cowboy shot"],
-  [/니샷/gi, "knee shot"],
-  [/와이드샷|원경|파노라마/gi, "wide angle shot, panoramic view"],
-  [/하이앵글|위에서|탑뷰|버드아이뷰/gi, "high angle, top-down bird-eye view, from above"],
-  [/로우앵글|아래에서|웜아이뷰/gi, "low angle, worm-eye view, from below"],
-  [/더치앵글|기울어진/gi, "dutch angle, tilted perspective"],
-  [/아이레벨|눈높이/gi, "eye level view"],
-
-  // 4. 의상 & 아이템
+  // 4. 의상 & 아이템 & 액세서리
+  [/검은\s*뿔테\s*안경|뿔테\s*안경/gi, "black horn-rimmed glasses"],
+  [/검은\s*안경/gi, "black glasses"],
+  [/안경/gi, "glasses, stylish spectacles"],
+  [/선글라스/gi, "sunglasses"],
+  [/마스크/gi, "face mask"],
+  [/핑크\s*요가복|분홍색?\s*요가복/gi, "pink yoga outfit"],
+  [/요가복|레깅스/gi, "yoga wear, fitted leggings"],
+  [/맨발/gi, "bare feet, barefoot"],
+  [/빨간색?\s*페디큐어/gi, "red pedicure"],
+  [/빨간색?\s*발톱/gi, "red toenails"],
+  [/페디큐어/gi, "pedicure"],
+  [/매니큐어/gi, "manicure"],
+  [/발톱/gi, "toenails"],
+  [/손톱/gi, "fingernails"],
   [/웨딩드레스/gi, "wedding dress, white bridal gown"],
   [/이브닝드레스/gi, "evening dress, luxury gown"],
   [/원피스|드레스/gi, "dress, elegant outfit"],
@@ -124,22 +130,21 @@ export const PROMPT_TRANSLATIONS = [
   [/가디건/gi, "cardigan"],
   [/니트|스웨터/gi, "knit sweater"],
   [/가죽\s*자켓/gi, "leather jacket"],
-  [/안경/gi, "glasses, stylish spectacles"],
-  [/선글라스/gi, "sunglasses"],
-  [/마스크/gi, "face mask"],
   [/모자|캡/gi, "cap, stylish hat"],
   [/베레모/gi, "beret"],
   [/목걸이/gi, "necklace, fine jewelry"],
   [/귀걸이/gi, "earrings"],
   [/헤드폰|이어폰/gi, "headphones around neck"],
-  [/검|칼/gi, "holding sword, katana"],
-  [/총|권총/gi, "holding gun, pistol"],
+  [/장검|일본도|카타나|대검|(손에\s*)?칼을\s*든/gi, "holding sword, katana"],
+  [/권총|소총|(손에\s*)?총을\s*든/gi, "holding gun, rifle"],
   [/지팡이/gi, "magic staff"],
   [/스마트폰|핸드폰/gi, "holding smartphone"],
   [/책/gi, "holding book"],
   [/커피잔|음료/gi, "holding coffee cup"],
 
   // 5. 포즈 & 행동 & 표정
+  [/무릎을\s*세우고\s*앉아서\s*양손으로\s*자신의\s*무릎을\s*감싸고\s*있는\s*자세/gi, "full body sitting with knees bent and hugging knees with both hands"],
+  [/무릎을\s*감싸고\s*앉은/gi, "sitting hugging knees with both arms"],
   [/웃는\s*얼굴|미소|웃음/gi, "smiling warmly, gentle smile"],
   [/활짝\s*웃는|환한\s*미소/gi, "bright radiant smile, open mouth laughing"],
   [/무표정|시크한/gi, "expressionless, cool stoic face"],
@@ -166,10 +171,41 @@ export const PROMPT_TRANSLATIONS = [
   // 6. 신체 부위
   [/손|손가락/gi, "detailed hands, perfect fingers"],
   [/다리|각선미/gi, "slender legs"],
-  [/발/gi, "feet"],
   [/어깨/gi, "shoulders"],
+  [/쇄골/gi, "collarbone, neckline"],
 
-  // 7. 배경 & 조명 & 환경
+  // 7. 색상
+  [/검은색?|검정색?/gi, "black"],
+  [/흰색|하얀색|백색/gi, "white"],
+  [/빨간색?|붉은색?/gi, "red"],
+  [/파란색?|푸른색?/gi, "blue"],
+  [/노란색?|황색/gi, "yellow"],
+  [/분홍색?|핑크색?/gi, "pink"],
+  [/보라색?/gi, "purple"],
+  [/초록색?|녹색/gi, "green"],
+  [/회색/gi, "gray"],
+  [/금색/gi, "gold"],
+  [/은색/gi, "silver"],
+
+  // 8. 앵글 & 시점 & 구도
+  [/45도(\s*측면|\s*각도|\s*뷰)?|반측면|쿼터뷰/gi, "three-quarter view, 45-degree angle"],
+  [/90도(\s*측면|\s*각도|\s*프로필)?/gi, "side profile view, 90-degree angle"],
+  [/정면(\s*샷|\s*뷰)?/gi, "front view"],
+  [/측면(\s*샷|\s*뷰)?/gi, "side profile view"],
+  [/뒷모습|후면(\s*샷|\s*뷰)?/gi, "back view, from behind"],
+  [/뒤돌아보는/gi, "looking back over shoulder"],
+  [/오버더\s*숄더/gi, "over-the-shoulder shot"],
+  [/바스트샷|가슴위/gi, "bust shot"],
+  [/웨이스트샷|허리위/gi, "waist shot"],
+  [/카우보이샷|무릎위/gi, "cowboy shot"],
+  [/니샷/gi, "knee shot"],
+  [/와이드샷|원경|파노라마/gi, "wide angle shot, panoramic view"],
+  [/하이앵글|위에서|탑뷰|버드아이뷰/gi, "high angle, top-down bird-eye view, from above"],
+  [/로우앵글|아래에서|웜아이뷰/gi, "low angle, worm-eye view, from below"],
+  [/더치앵글|기울어진/gi, "dutch angle, tilted perspective"],
+  [/아이레벨|눈높이/gi, "eye level view"],
+
+  // 9. 배경 & 조명 & 환경
   [/백색\s*배경|흰색\s*배경|화이트\s*배경/gi, "clean solid pure white background, studio white backdrop"],
   [/검정\s*(색\s*)?실선\s*(격자)?|분할선|격자선/gi, "split-screen multi-panel layout, separated by thin black divider lines"],
   [/사이버펑크(\s*도시)?/gi, "cyberpunk neon city, glowing holographic lights"],
@@ -188,12 +224,12 @@ export const PROMPT_TRANSLATIONS = [
   [/노을|일몰|석양/gi, "sunset, golden hour, warm atmospheric glow"],
   [/야경|밤/gi, "night scene, dark atmospheric lighting"],
   [/비오는|비/gi, "rainy day, wet floor reflections"],
-  [/눈오는|눈꽃|눈|설원/gi, "snowing, winter snowfall, snowfield, frost"],
+  [/눈오는|눈꽃|설원/gi, "snowing, winter snowfall, snowfield, frost"],
   [/벚꽃|사쿠라/gi, "cherry blossoms, falling sakura petals"],
   [/단풍/gi, "autumn leaves, fall foliage"],
   [/배경/gi, "background"],
 
-  // 8. 화풍 & 조명 & 퀄리티
+  // 10. 화풍 & 조명 & 퀄리티
   [/실사|사진|포토리얼/gi, "photorealistic, 8k photography, hyperrealistic"],
   [/애니|일러스트|만화/gi, "anime style, detailed illustration"],
   [/시네마틱/gi, "cinematic lighting, film still"],
@@ -206,7 +242,7 @@ export const PROMPT_TRANSLATIONS = [
 ];
 
 /**
- * 사전 기반 빠른 오프라인 번역
+ * 사전 기반 빠른 오프라인 번역 (단어 경계 및 문맥 안전 치환)
  */
 export function translateViaDictionary(text) {
   if (!text || typeof text !== 'string') return '';
@@ -232,7 +268,11 @@ export function translateViaDictionary(text) {
 }
 
 /**
- * Google Translate API를 활용한 실시간 번역 (실패 시 사전 번역 fallback)
+ * 다중 계층(Multi-tier) 고성능 번역 엔진
+ * 1. Google Translate API (clients5 / dict-chrome-ex) - 고성능 NMT 신경망 번역
+ * 2. Google Translate Single API (gtx)
+ * 3. MyMemory API
+ * 4. 오프라인 AI 사전 (translateViaDictionary)
  */
 export async function translatePrompt(text) {
   if (!text || typeof text !== 'string') return '';
@@ -244,25 +284,66 @@ export async function translatePrompt(text) {
     return trimmed;
   }
 
-  // 1차: 사전으로 알려진 AI 표준 프롬프트 치환
-  let dictTranslated = translateViaDictionary(trimmed);
+  const encoded = encodeURIComponent(trimmed);
 
-  // 치환 후에도 한글이 남아있으면 Google Translate API 호출
-  if (/[가-힣]/.test(dictTranslated)) {
-    try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=${encodeURIComponent(dictTranslated)}`;
-      const res = await fetch(url);
-      if (res.ok) {
-        const json = await res.json();
-        if (json && json[0]) {
-          const apiTranslated = json[0].map(item => item[0]).join('');
-          return apiTranslated.trim();
-        }
+  // Tier 1: Google Translate (clients5)
+  try {
+    const url1 = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=ko&tl=en&q=${encoded}`;
+    const res1 = await fetch(url1);
+    if (res1.ok) {
+      const data1 = await res1.json();
+      if (Array.isArray(data1) && data1.length > 0 && typeof data1[0] === 'string' && data1[0].trim()) {
+        return cleanTranslatedPrompt(data1[0]);
       }
-    } catch (e) {
-      console.warn('Google Translate API error, using dict fallback:', e);
     }
+  } catch (e1) {
+    // Continue to Tier 2
   }
 
-  return dictTranslated;
+  // Tier 2: Google Translate Single (gtx)
+  try {
+    const url2 = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=${encoded}`;
+    const res2 = await fetch(url2);
+    if (res2.ok) {
+      const data2 = await res2.json();
+      if (data2 && data2[0] && Array.isArray(data2[0])) {
+        const fullText = data2[0].map(item => item[0]).join('');
+        if (fullText.trim()) {
+          return cleanTranslatedPrompt(fullText);
+        }
+      }
+    }
+  } catch (e2) {
+    // Continue to Tier 3
+  }
+
+  // Tier 3: MyMemory API
+  try {
+    const url3 = `https://api.mymemory.translated.net/get?q=${encoded}&langpair=ko|en`;
+    const res3 = await fetch(url3);
+    if (res3.ok) {
+      const data3 = await res3.json();
+      if (data3 && data3.responseData && data3.responseData.translatedText) {
+        const mmText = data3.responseData.translatedText.trim();
+        if (mmText && !mmText.startsWith("MYMEMORY WARNING")) {
+          return cleanTranslatedPrompt(mmText);
+        }
+      }
+    }
+  } catch (e3) {
+    // Continue to Tier 4
+  }
+
+  // Tier 4: Offline AI Dictionary Fallback
+  return translateViaDictionary(trimmed);
+}
+
+function cleanTranslatedPrompt(text) {
+  if (!text) return '';
+  let res = text.trim();
+  res = res.replace(/\s{2,}/g, ' ');
+  res = res.replace(/\s*,\s*/g, ', ');
+  res = res.replace(/(,\s*){2,}/g, ', ');
+  res = res.replace(/^,\s*|,\s*$/g, '');
+  return res;
 }

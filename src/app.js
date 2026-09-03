@@ -863,7 +863,7 @@ async function saveCharFromModal() {
   const finalKo = ko || label;
 
   if (!en && finalKo) {
-    en = translateViaDictionary(finalKo) || (await translatePrompt(finalKo));
+    en = await translatePrompt(finalKo);
   }
 
   const editId = elements.charEditId?.value;
@@ -926,7 +926,8 @@ async function applyCharacterProfile(textKo, textEn = null) {
     if (textEn && textEn.trim()) {
       state.characterProfileEn = textEn.trim();
     } else {
-      state.characterProfileEn = translateViaDictionary(cleanKo) || (await translatePrompt(cleanKo));
+      if (elements.profileEnInput) elements.profileEnInput.value = "번역 중...";
+      state.characterProfileEn = await translatePrompt(cleanKo);
     }
     if (elements.profileEnInput) elements.profileEnInput.value = state.characterProfileEn;
   } else {
@@ -2194,11 +2195,6 @@ function bindEvents() {
     const current = getSelectedArea();
     if (current) {
       current.koPrompt = elements.inputKoPrompt.value;
-      const fastEn = translateViaDictionary(current.koPrompt);
-      if (fastEn && fastEn !== current.koPrompt) {
-        elements.inputEnPrompt.value = fastEn;
-        current.prompt = fastEn;
-      }
       renderAreas();
       updatePromptOutput();
     }

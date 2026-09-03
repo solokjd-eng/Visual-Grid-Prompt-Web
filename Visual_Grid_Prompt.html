@@ -2559,7 +2559,10 @@ body {
           </div>
         </div>
 
-        <div class="area-editor-section">
+        <!-- Area Tabs -->
+        <div class="area-tabs-container" id="area-tabs"></div>
+
+        <div class="area-editor-section" style="margin-top: 10px;">
           <!-- 1. 기본 샷/구도 트리 셀렉터 (Windows Explorer Tree Selector) -->
           <div class="form-group">
             <label class="form-label" for="preset-tree-btn">
@@ -5601,6 +5604,7 @@ function getMockupSvg(text = "") {
 }
 
 function renderAreaTabs() {
+  if (!elements.areaTabs) return;
   elements.areaTabs.innerHTML = "";
   state.areas.forEach((area, index) => {
     const palette = COLOR_PALETTE[index % COLOR_PALETTE.length];

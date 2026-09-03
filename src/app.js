@@ -1830,6 +1830,7 @@ function getMockupSvg(text = "") {
 }
 
 function renderAreaTabs() {
+  if (!elements.areaTabs) return;
   elements.areaTabs.innerHTML = "";
   state.areas.forEach((area, index) => {
     const palette = COLOR_PALETTE[index % COLOR_PALETTE.length];

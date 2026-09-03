@@ -373,8 +373,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+  width: 100%;
 }
 
 .profile-title-left {
@@ -382,13 +383,15 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
-.profile-title-actions {
+.profile-actions-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .profile-title-actions .btn-xs, .btn-xs {
@@ -2347,16 +2350,18 @@ body {
             <span class="card-title">👤 공통 인물 / 피사체 묘사 (Character Profile)</span>
             <span class="form-label-tag">공란 시 자동 생략 | 입력 시 모든 패널에 외형·의상 일관 유지</span>
           </div>
-          <div class="profile-title-actions">
-            <button id="btn-save-profile" class="btn btn-secondary btn-xs" title="현재 인물 묘사를 즐겨찾기에 저장">⭐ 즐겨찾기 저장</button>
-            <button id="btn-clear-profile" class="btn btn-secondary btn-xs" title="입력 내용 초기화">🗑️ 비우기</button>
-            <button type="button" class="btn-card-collapse" id="btn-collapse-char" title="인물 카드 접기/펼치기">
-              <span id="arrow-char">▼</span>
-            </button>
-          </div>
+          <button type="button" class="btn-card-collapse" id="btn-collapse-char" title="인물 카드 접기/펼치기">
+            <span id="arrow-char">▼</span>
+          </button>
         </div>
 
         <div class="card-collapsible-content" id="content-char">
+          <!-- Top Action Buttons (즐겨찾기 저장, 비우기) -->
+          <div class="profile-actions-bar" style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <button id="btn-save-profile" class="btn btn-secondary btn-xs" title="현재 인물 묘사를 즐겨찾기에 저장">⭐ 즐겨찾기 저장</button>
+            <button id="btn-clear-profile" class="btn btn-secondary btn-xs" title="입력 내용 초기화">🗑️ 비우기</button>
+          </div>
+
           <!-- 1. 인물 즐겨찾기 전용 셀렉트 -->
           <div class="form-group" style="margin-bottom: 8px;">
             <label class="form-label" for="character-favorite-select" style="margin-bottom: 4px;">

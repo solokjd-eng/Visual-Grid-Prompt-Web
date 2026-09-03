@@ -365,8 +365,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+  width: 100%;
 }
 
 .profile-title-left {
@@ -374,13 +375,15 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
-.profile-title-actions {
+.profile-actions-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .profile-title-actions .btn-xs, .btn-xs {

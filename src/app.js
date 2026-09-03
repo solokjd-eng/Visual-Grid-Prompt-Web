@@ -47,9 +47,6 @@ const elements = {
   
   // Ratio buttons
   ratioButtons: document.querySelectorAll(".ratio-btn"),
-  
-  // Templates
-  templatesContainer: document.getElementById("templates-container"),
 
   // Character Profile & Favorites
   inputCharacterKo: document.getElementById("input-character-ko"),
@@ -75,11 +72,6 @@ const elements = {
   charInputEn: document.getElementById("char-input-en"),
 
   // Card Collapsible Controls
-  cardTemplates: document.getElementById("card-templates"),
-  btnCollapseTemplates: document.getElementById("btn-collapse-templates"),
-  arrowTemplates: document.getElementById("arrow-templates"),
-  contentTemplates: document.getElementById("content-templates"),
-
   cardCharProfile: document.getElementById("card-char-profile"),
   btnCollapseChar: document.getElementById("btn-collapse-char"),
   arrowChar: document.getElementById("arrow-char"),
@@ -417,22 +409,19 @@ export function initApp() {
   initArtStylesUI();
   initPresetsUI();
   initCustomPresetsUI();
-  initLayoutTemplatesUI();
   initCharacterProfileUI();
   initCollapsibleCards();
   bindEvents();
   
-  // Load saved state or default template
+  // Load saved state
   const saved = localStorage.getItem("visual_grid_prompt_saved_state");
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
       Object.assign(state, parsed);
     } catch (e) {
-      loadTemplate(LAYOUT_TEMPLATES[0]);
+      // Keep initial clean state
     }
-  } else {
-    loadTemplate(LAYOUT_TEMPLATES[0]);
   }
 
   // Setup ResizeObserver for fluid auto-scaling of canvas
@@ -476,13 +465,10 @@ function initCollapsibleCards() {
     });
   };
 
-  // 1. Templates Quick Bar Collapse
-  setupCardCollapse(elements.btnCollapseTemplates, elements.contentTemplates, elements.arrowTemplates, elements.cardTemplates, "vgs_collapse_templates", true);
-
-  // 2. Character Profile Collapse
+  // 1. Character Profile Collapse
   setupCardCollapse(elements.btnCollapseChar, elements.contentChar, elements.arrowChar, elements.cardCharProfile, "vgs_collapse_char", true);
 
-  // 3. Art Styles Card Collapse
+  // 2. Art Styles Card Collapse
   setupCardCollapse(elements.btnCollapseArt, elements.contentArt, elements.arrowArt, elements.cardArtStyles, "vgs_collapse_art", true);
 
   // 4. Sub-drawer for Art Prompts (Prefix / Suffix directly editable)
@@ -1402,46 +1388,6 @@ function saveCustomPresetsToStorage() {
   localStorage.setItem("visual_grid_custom_presets", JSON.stringify(state.customPresets));
 }
 
-/**
- * Initialize Templates Horizontal Bar
- */
-function initLayoutTemplatesUI() {
-  elements.templatesContainer.innerHTML = "";
-  LAYOUT_TEMPLATES.forEach(tpl => {
-    const btn = document.createElement("button");
-    btn.className = "btn-template";
-    btn.innerHTML = `<span>${tpl.name}</span>`;
-    btn.addEventListener("click", () => {
-      loadTemplate(tpl);
-      showToast(`레이아웃 템플릿 '${tpl.name}' 적용 완료!`);
-    });
-    elements.templatesContainer.appendChild(btn);
-  });
-}
-
-/**
- * Load Predefined Template
- */
-function loadTemplate(tpl) {
-  state.aspectRatio = tpl.aspectRatio;
-  state.cols = tpl.cols;
-  state.rows = tpl.rows;
-  state.whiteBg = tpl.whiteBg;
-  state.gridBorders = tpl.gridBorders;
-  state.characterSheetStyle = tpl.characterSheetStyle;
-  state.prefixPrompt = tpl.prefixPrompt || state.prefixPrompt;
-  state.suffixPrompt = tpl.suffixPrompt || state.suffixPrompt;
-  state.areas = JSON.parse(JSON.stringify(tpl.areas));
-  state.selectedAreaId = state.areas.length > 0 ? state.areas[0].id : null;
-
-  updateCanvasDimensions();
-  renderGridCells();
-  renderAreas();
-  updateUIInputs();
-  updatePromptOutput();
-  saveState();
-}
-
 // =============================================================================
 // Canvas & Grid Render Functions (Fluid Auto-Fit)
 // =============================================================================
@@ -2302,14 +2248,18 @@ function bindEvents() {
 
   // Clear All
   elements.btnClearAll.addEventListener("click", () => {
-    if (confirm("모든 영역을 초기화하시겠습니까?")) {
+    if (confirm("모든 영역 및 프롬프트를 초기화하시겠습니까?")) {
       state.areas = [];
       state.selectedAreaId = null;
+      state.characterProfileKo = "";
+      state.characterProfileEn = "";
+      if (elements.inputCharacterKo) elements.inputCharacterKo.value = "";
+      if (elements.profileEnInput) elements.profileEnInput.value = "";
       renderAreas();
       updateUIInputs();
       updatePromptOutput();
       saveState();
-      showToast("모든 영역이 초기화되었습니다.");
+      showToast("모든 영역과 프롬프트가 초기화되었습니다.");
     }
   });
 

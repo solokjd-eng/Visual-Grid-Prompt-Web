@@ -144,9 +144,8 @@ export function buildFinalPrompt({
   let bodyPrompt = "";
 
   if (sortedAreas.length === 0) {
-    // 영역이 없을 때 prefix + characterProfile + suffix
-    const parts = [prefixPrompt, charProfileTrimmed, suffixPrompt].filter(Boolean);
-    return parts.join(", ");
+    // 캔버스에 영역(Area)이 하나도 없을 때는 최종 프롬프트가 비어있도록 반환 (플레이스홀더 표시)
+    return "";
   }
 
   switch (format) {
